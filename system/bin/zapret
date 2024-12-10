@@ -38,10 +38,11 @@ if [ "$1" == "start" ]; then
     use_iptables=$(check_iptables_support)
 
     echo "Starting zapret..."; 
+	MODDIR=/data/adb/modules/zapret
     hostlist="--hostlist-auto=/data/adb/zapret/DPI_list.txt --hostlist-exclude=/data/adb/zapret/DPI_ignore.txt";
-    config="--filter-tcp=80 --dpi-desync=fake,split2 --dpi-desync-autottl=2 --dpi-desync-fooling=md5sig $hostlist --new";
+    config="--filter-tcp=80 $hostlist --hostlist-auto-fail-threshold=2 --hostlist-auto-fail-time=60 --hostlist-auto-retrans-threshold=2 --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls=$MODDIR/t_google.bin --dpi-desync-fake-quic=$MODDIR/q_google.bin --new";
     config="$config --filter-tcp=443 --hostlist=/etc/list-youtube.txt --dpi-desync=fake,split2 --dpi-desync-repeats=11 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls=/etc/tls_clienthello_www_google_com.bin --new"
-    config="$config --filter-tcp=80,443 --dpi-desync=fake,disorder2 --dpi-desync-repeats=6 --dpi-desync-autottl=2 --dpi-desync-fooling=md5sig $hostlist --new";
+    config="$config --filter-tcp=80,443 $hostlist --hostlist-auto-fail-threshold=2 --hostlist-auto-fail-time=60 --hostlist-auto-retrans-threshold=2 --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls=$MODDIR/t_google.bin --dpi-desync-fake-quic=$MODDIR/q_google.bin --new";
     config="$config --filter-udp=50000-50099 --dpi-desync=fake --dpi-desync-any-protocol --dpi-desync-fake-quic=0xC30000000108 --new";
     config="$config --filter-udp=443 --hostlist=/etc/list-youtube.txt --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic=/etc/quic_initial_www_google_com.bin --new";
     config="$config --filter-udp=443 --dpi-desync=fake --dpi-desync-repeats=11 $hostlist";
