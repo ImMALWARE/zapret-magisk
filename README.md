@@ -14,6 +14,10 @@ su -c zapret stop
 ```sh
 su -c rm /data/adb/modules/zapret/autostart
 ```
+Если нужно сново включить автозапуск, выполнните команду:
+```sh
+su -c touch /data/adb/modules/zapret/autostart
+```
 Запускать zapret тогда нужно будет по команде:
 ```sh
 su -c zapret start
