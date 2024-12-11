@@ -104,9 +104,11 @@ echo "zapret service stopped!"; return 0; fi;
 
 #autostart
 if [ "$1" == "autostart-off" ]; then
+echo "autostart disabled"
 su -c rm /data/adb/modules/zapret/autostart; return 0; fi;
 
 if [ "$1" == "autostart-on" ]; then
+echo "autostart enable"
 su -c touch /data/adb/modules/zapret/autostart; return 0; fi;
 
 if [ -z "$1" ]; then
