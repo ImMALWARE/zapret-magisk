@@ -2,13 +2,29 @@ if ! [ -d "/data/adb/zapret" ]; then
     echo "Creating directory for zapret...";
     mkdir -p "/data/adb/zapret";
     cat > "/data/adb/zapret/DPI_list.txt" << EOL
-rutracker.org
-ntc.party
-prostovpn.org
+googlevideo.com
+googlesyndication.com
+youtu.be
+youtube.com
+youtubei.googleapis.com
+youtubeembeddedplayer.googleapis.com
+ytimg.l.google.com
+ytimg.com
+jnn-pa.googleapis.com
+youtube-nocookie.com
+youtube-ui.l.google.com
+yt-video-upload.l.google.com
+wide-youtube.l.google.com
+youtubekids.com
+ggpht.com
 discord.com
-discord.gg
-discordapp.com
+gateway.discord.gg
+cdn.discordapp.com
 discordapp.net
+discordapp.com
+discord.gg
+media.discordapp.net
+images-ext-1.discordapp.net
 discord.app
 discord.media
 discordcdn.com
@@ -19,6 +35,13 @@ discordstatus.com
 dis.gd
 discord.co
 discord-attachments-uploads-prd.storage.googleapis.com
+7tv.app
+7tv.io
+10tv.app
+soundcloud.com
+sndcdn.com
+soundcloud.cloud
+cloudflare-ech.com
 EOL
     chmod 666 "/data/adb/zapret/DPI_list.txt";
 fi;
@@ -40,12 +63,8 @@ if [ "$1" == "start" ]; then
     echo "Starting zapret..."; 
 	MODDIR=/data/adb/modules/zapret
     hostlist="--hostlist-auto=/data/adb/zapret/DPI_list.txt --hostlist-exclude=/data/adb/zapret/DPI_ignore.txt";
-    config="--filter-tcp=80 $hostlist --hostlist-auto-fail-threshold=2 --hostlist-auto-fail-time=60 --hostlist-auto-retrans-threshold=2 --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls=$MODDIR/t_google.bin --dpi-desync-fake-quic=$MODDIR/q_google.bin --new";
-    config="$config --filter-tcp=443 --hostlist=/etc/list-youtube.txt --dpi-desync=fake,split2 --dpi-desync-repeats=11 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls=/etc/tls_clienthello_www_google_com.bin --new"
-    config="$config --filter-tcp=80,443 $hostlist --hostlist-auto-fail-threshold=2 --hostlist-auto-fail-time=60 --hostlist-auto-retrans-threshold=2 --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=md5sig --dpi-desync-fake-tls=$MODDIR/t_google.bin --dpi-desync-fake-quic=$MODDIR/q_google.bin --new";
-    config="$config --filter-udp=50000-50099 --dpi-desync=fake --dpi-desync-any-protocol --dpi-desync-fake-quic=0xC30000000108 --new";
-    config="$config --filter-udp=443 --hostlist=/etc/list-youtube.txt --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic=/etc/quic_initial_www_google_com.bin --new";
-    config="$config --filter-udp=443 --dpi-desync=fake --dpi-desync-repeats=11 $hostlist";
+    source /data/adb/modules/zapret/config.conf
+    config=$config;
 
     sysctl net.netfilter.nf_conntrack_tcp_be_liberal=1 > /dev/null;
     cbOrig="-m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -m mark ! --mark 0x40000000/0x40000000";
@@ -83,6 +102,12 @@ iptables -t mangle -F PREROUTING; iptables -t mangle -F POSTROUTING;
 kill "$(pidof nfqws)";
 echo "zapret service stopped!"; return 0; fi;
 
+#autostart
+if [ "$1" == "autostart-off" ]; then
+su -c rm /data/adb/modules/zapret/autostart; return 0; fi;
+
+if [ "$1" == "autostart-on" ]; then
+su -c touch /data/adb/modules/zapret/autostart; return 0; fi;
 
 if [ -z "$1" ]; then
 echo "Usage: zapret start or zapret stop. Based on https://github.com/bol-van/zapret/nfqws"; fi;
