@@ -1,6 +1,6 @@
 # Magisk модуль с zapret
 
-## Скачать тут: https://github.com/ImMALWARE/zapret-magisk/releases/download/2/zapret_module.zip
+## Скачать тут: 
 
 ## Установите модуль, перезагрузитесь, как обычно. **zapret** будет запущен автоматически. YouTube и Discord (с голосовыми чатами) должны работать корректно.
 
