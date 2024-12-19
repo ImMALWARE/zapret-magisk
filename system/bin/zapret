@@ -1,3 +1,33 @@
+
+arch=$(uname -m)
+
+case "$arch" in
+    "x86_64")
+        nfqws="nfqws_x86_64"
+        ;;
+    "i386" | "i686")
+        nfqws="nfqws_x86"
+        ;;
+    "armv7l" | "arm")
+        nfqws="nfqws_arm32"
+        ;;
+    "aarch64")
+        nfqws="nfqws_arm64"
+        ;;
+    "mips")
+        nfqws="nfqws_mips"
+        ;;
+    "mipsel")
+        nfqws="nfqws_mipsel"
+        ;;
+    *)
+        echo "Unknown arch: $arch"
+        exit 1
+        ;;
+esac
+
+
+
 if ! [ -d "/data/adb/zapret" ]; then
     echo "Creating directory for zapret...";
     mkdir -p "/data/adb/zapret";
@@ -19,6 +49,19 @@ discordstatus.com
 dis.gd
 discord.co
 discord-attachments-uploads-prd.storage.googleapis.com
+googlevideo.com
+youtubei.googleapis.com
+ytimg.com
+yt3.ggpht.com
+yt4.ggpht.com
+youtube.com
+youtubeembeddedplayer.googleapis.com
+ytimg.l.google.com
+jnn-pa.googleapis.com
+youtube-nocookie.com
+youtube-ui.l.google.com
+yt-video-upload.l.google.com
+wide-youtube.l.google.com
 EOL
     chmod 666 "/data/adb/zapret/DPI_list.txt";
 fi;
@@ -74,12 +117,12 @@ if [ "$1" == "start" ]; then
     iptMultiPort "tcp" "$tcp_ports";
     iptMultiPort "udp" "$udp_ports";
 
-    nfqws --uid=0:0 --qnum=200 $config > /dev/null & 
+    $nfqws --uid=0:0 --qnum=200 $config > /dev/null & 
     echo "zapret service started!"; return 0; fi
 
 if [ "$1" == "stop" ]; then
 iptables -t mangle -F PREROUTING; iptables -t mangle -F POSTROUTING;
-kill "$(pidof nfqws)";
+kill "$(pidof $nfqws)";
 echo "zapret service stopped!"; return 0; fi;
 
 

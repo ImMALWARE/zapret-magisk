@@ -1,6 +1,6 @@
-id=zapret
+id=zapret64bitcompat
 name=zapret
-version=1.1
-versionCode=11
-author=MALWARE
-description=https://t.me/immalware
+version=1.1-2
+versionCode=112
+author=MALWARE & dolbaeb.me/tgc
+description=Модуль zapret который поддерживает все архитектуры процессора (arm32 arm64 mips mipsel x86 x86_64)
