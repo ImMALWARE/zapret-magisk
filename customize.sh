@@ -1,9 +1,29 @@
-if ! [ -d "/data/adb/zapret" ]; then
-    echo "Creating directory for zapret...";
-    mkdir -p "/data/adb/zapret";
-fi;
+if [[ "$ARCH" != "arm" && \
+      "$ARCH" != "arm64" && \
+			"$ARCH" != "x86" && \
+			"$ARCH" != "x64" ]]; then
+	abort "- Архитектура $ARCH не поддерживается!"
+else
+	set_binary
+fi
 
-cat > "/data/adb/zapret/DPI_list.txt" << EOL
+
+if ! [ -d "/data/adb/zapret" ]; then
+	set_list
+fi
+
+ui_print "Готово."
+
+set_binary() {
+	ui_print "Копирование nfqws.."
+	cp "$MODPATH/binary/nfqws_$ARCH" "$MODPATH/system/bin/nfqws"
+	ui_print "Готово."
+}
+
+set_list() {
+	ui_print "Создание директории для zapret..."
+	mkdir -p "/data/adb/zapret"
+	cat > "/data/adb/zapret/DPI_list.txt" << EOL
 7tv.app
 adtidy.org
 amnezia.org
@@ -93,9 +113,9 @@ zelenka.guru
 znanija.com
 
 EOL
-chmod 666 "/data/adb/zapret/DPI_list.txt";
+	set_perm "/data/adb/zapret/DPI_list.txt" 0 0 666
 
-cat > "/data/adb/zapret/DPI_ignore.txt" << EOL
+	cat > "/data/adb/zapret/DPI_ignore.txt" << EOL
 4pda.to
 accounts.google.com
 ajax.googleapis.com
@@ -132,4 +152,5 @@ xiaomi.com
 xiaomi.net
 
 EOL
-chmod 666 "/data/adb/zapret/DPI_ignore.txt";
+	set_perm "/data/adb/zapret/DPI_ignore.txt" 0 0 666
+}
