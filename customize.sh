@@ -1,3 +1,4 @@
+# shellcheck disable=SC2148
 if [[ "$ARCH" != "arm" && \
       "$ARCH" != "arm64" && \
 			"$ARCH" != "x86" && \
