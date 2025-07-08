@@ -1,99 +1,125 @@
 <!DOCTYPE html>
 <html lang="ru">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Настройка конфига - zapret</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
-    <link rel="stylesheet" href="/style.css">
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"
+    ></script>
+    <link rel="stylesheet" href="/style.css" />
     <script type="module">
-        import { exec, toast } from '/kernelsu.js';
-        function undo() {
-            exec("cat /data/adb/zapret/config.txt").then(({ stdout }) => {
-                configtext.value = stdout;
-            });
-        }
-        undo();
-        window.undo = undo;
+      import { exec, toast } from "/kernelsu.js";
+      function undo() {
+        exec("cat /data/adb/zapret/config.txt").then(({ stdout }) => {
+          configtext.value = stdout;
+        });
+      }
+      undo();
+      window.undo = undo;
 
-        function save(config) {
-            config = config
-                .split('\n')
-                .map(line => line
-                    .replace(/--wf-(tcp|udp)=[^ ]+/g, '')
-                    .replace(/ {2,}/g, ' ')
-                    .replace(/^ /, '')
-                    .replace(/ $/, '')
-                )
-                .join('\n');
-            if (config.length === 0) return;
-            configtext.value = config;
-            exec(`echo "${config}" > /data/adb/zapret/config.txt`).then(() => {
-                toast("Сохранено");
-            });
-        }
-        window.save = save;
+      function save(config) {
+        config = config
+          .split("\n")
+          .map((line) =>
+            line
+              .replace(/--wf-(tcp|udp)=[^ ]+/g, "")
+              .replace(/ {2,}/g, " ")
+              .replace(/^ /, "")
+              .replace(/ $/, "")
+          )
+          .join("\n");
+        if (config.length === 0) return;
+        configtext.value = config;
+        exec(`echo "${config}" > /data/adb/zapret/config.txt`).then(() => {
+          toast("Сохранено");
+        });
+      }
+      window.save = save;
 
-        function restart() {
-            exec("zapret stop").then(({ stdout }) => {
-                toast(stdout);
-            });
-            exec("zapret start").then(({ stdout }) => {
-                toast(stdout);
-            });
-        }
-        window.restart = restart;
+      function restart() {
+        exec("zapret stop").then(({ stdout }) => {
+          toast(stdout);
+        });
+        exec("zapret start").then(({ stdout }) => {
+          toast(stdout);
+        });
+      }
+      window.restart = restart;
     </script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div>
-        <nav class="m l left">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a class="active" href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <nav class="s bottom">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a class="active" href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <main class="responsive" style="overflow-y: auto;">
-            <div style="display: flex; flex-direction: column; height: 100%;">
-                <h5>Конфиг zapret</h5>
-                <div class="field textarea round border extra">
-                    <textarea id="configtext"></textarea>
-                </div>
-                <div style="margin-bottom: 30px;">
-                    <button onclick="save(configtext.value)">
-                        <i>save</i>
-                        <span>Сохранить</span>
-                    </button>
-                    <button onclick="undo()">
-                        <i>undo</i>
-                        <span>Отменить</span>
-                    </button>
-                    <button onclick="restart()">
-                        <i>replay</i>
-                        <span>Перезапустить zapret</span>
-                    </button>
-                </div>
-            </div>
-             <div>
-                <p><code>{hosts}</code> — подставит путь к <code>autohosts.txt</code></p>
-                <p><code>{ignore}</code> — подставит путь к <code>ignore.txt</code></p>
-                <p><code>{youtube}</code> — подставит путь к <code>/etc/youtube.txt</code></p>
-                <p><code>{quicgoogle}</code> — подставит путь к <code>/etc/quic_initial_www_google_com.bin</code></p>
-                <p><code>{tlsgoogle}</code> — подставит путь к <code>/etc/tls_clienthello_www_google_com.bin</code></p>
-            </div>
-        </main>
+      <nav class="m l left">
+        <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
+        <a href="domains.html"
+          ><i>domain</i><span class="bottom">Домены</span></a
+        >
+        <a class="active" href="config.html"
+          ><i>build</i><span class="bottom">Конфиг</span></a
+        >
+      </nav>
+      <nav class="s bottom">
+        <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
+        <a href="domains.html"
+          ><i>domain</i><span class="bottom">Домены</span></a
+        >
+        <a class="active" href="config.html"
+          ><i>build</i><span class="bottom">Конфиг</span></a
+        >
+      </nav>
+      <main class="responsive" style="overflow-y: auto">
+        <div style="display: flex; flex-direction: column; height: 100%">
+          <h5>Конфиг zapret</h5>
+          <div class="field textarea round border extra">
+            <textarea id="configtext"></textarea>
+          </div>
+          <div style="margin-bottom: 30px">
+            <button onclick="save(configtext.value)">
+              <i>save</i>
+              <span>Сохранить</span>
+            </button>
+            <button onclick="undo()">
+              <i>undo</i>
+              <span>Отменить</span>
+            </button>
+            <button onclick="restart()">
+              <i>replay</i>
+              <span>Перезапустить zapret</span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <p>
+            <code>{hosts}</code> — подставит путь к <code>autohosts.txt</code>
+          </p>
+          <p>
+            <code>{ignore}</code> — подставит путь к <code>ignore.txt</code>
+          </p>
+          <p>
+            <code>{youtube}</code> — подставит путь к
+            <code>/etc/youtube.txt</code>
+          </p>
+          <p>
+            <code>{quicgoogle}</code> — подставит путь к
+            <code>/etc/quic_initial_www_google_com.bin</code>
+          </p>
+          <p>
+            <code>{tlsgoogle}</code> — подставит путь к
+            <code>/etc/tls_clienthello_www_google_com.bin</code>
+          </p>
+        </div>
+      </main>
     </div>
-
-</body>
-
+  </body>
 </html>
