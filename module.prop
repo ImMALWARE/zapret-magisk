@@ -1,9 +1,7 @@
 id=zapret
-name=zapret
-version=1.4
-versionCode=15
-author=MALWARE
-description=Ускорение устаревших серверов. Нажмите Action, чтобы включить/отключить. https://t.me/immalware
-updateJson=https://raw.githubusercontent.com/ImMALWARE/zapret-magisk/master/update.json
-support=https://t.me/immalware_chat
-donate=https://boosty.to/notmalware/donate
+name=Zapret(nfqws)
+version=0.1
+versionCode=1
+author=NTeditor, ImMALWARE, VaIeroK, kivinblue1
+# description=
+updateJson=https://raw.githubusercontent.com/NTeditor/zapret-magisk/main/update.json
