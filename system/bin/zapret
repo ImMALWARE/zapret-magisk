@@ -1,68 +1,116 @@
 #!/system/bin/sh
-nfqws="nfqws"
 
-pidof "$nfqws" > /dev/null && echo "zapret is running" || echo "zapret is not running"
+CONFIG_FILE="/data/adb/zapret/config"
+export MODPATH="/data/adb/modules/zapret"
+export HOSTLIST="--hostlist=$MODPATH/list/zapret-hosts.txt \
+--hostlist-exclude=$MODPATH/list/zapret-hosts-exclude.txt \
+--hostlist=/data/adb/zapret/zapret-hosts-user.txt \
+--hostlist-exclude=/data/adb/zapret/zapret-hosts-user-exclude.txt \
+--hostlist-auto=/data/adb/zapret/zapret-hosts-auto.txt \
+--hostlist-auto-fail-threshold=3 \
+--hostlist-auto-fail-time=60 \
+--hostlist-auto-retrans-threshold=3"
 
-if [ "$1" == "start" ]; then
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "ERROR: Файл конфигурации не найден."
+    exit 1
+elif file "$CONFIG_FILE" | grep -q "CRLF"; then
+    echo "ERROR: Файл конфигурации в CRLF!"
+    exit 1
+fi
 
-    check_iptables_support() {
-        if iptables -t mangle -A POSTROUTING -p tcp -m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -j ACCEPT 2>/dev/null; then
-            iptables -t mangle -D POSTROUTING -p tcp -m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -j ACCEPT 2>/dev/null
-            echo "2"
-        else
-            echo "3"
-        fi
-    }
-    use_iptables=$(check_iptables_support)
+# shellcheck disable=SC3046
+# shellcheck disable=SC1090
+source "$CONFIG_FILE"
+NFQWS_OPT=$(echo "$NFQWS_OPT" | tr '\n' ' ')
 
-    echo "Starting zapret..."; 
-    hostlist="--hostlist-auto=/data/adb/zapret/DPI_list.txt --hostlist-exclude=/data/adb/zapret/DPI_ignore.txt";
-    config="--filter-udp=443 $hostlist --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic=/etc/quic_initial_www_google_com.bin --new";
-    config="$config --filter-udp=50000-50099 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-repeats=6 --new";
-    config="$config --filter-tcp=80 $hostlist --dpi-desync=fake,split2 --dpi-desync-autottl=2 --dpi-desync-fooling=md5sig --new";
-    config="$config --filter-tcp=443 $hostlist --dpi-desync=fake,split --dpi-desync-autottl=5 --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=/etc/tls_clienthello_www_google_com.bin";
+start_service() {
+    echo "Start service"
+    setup_iptables
 
-    sysctl net.netfilter.nf_conntrack_tcp_be_liberal=1 > /dev/null;
-    cbOrig="-m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -m mark ! --mark 0x40000000/0x40000000";
-    cbReply="-m connbytes --connbytes-dir=reply --connbytes-mode=packets --connbytes 1:6 -m mark ! --mark 0x40000000/0x40000000";
+    if [ "$MARK_SUPPORT" -eq 1 ]; then
+        mark_option="--dpi-desync-fwmark=0x40000000"
+    fi
 
-    iptAdd() {
-        if [[ "$use_iptables" == "3" ]]; then cbOrig=""; cbReply=""; fi;
-        iptDPort="--dport $2"; iptSPort="--sport $2";
-        iptables -t mangle -I POSTROUTING -p $1 $iptDPort $cbOrig -j NFQUEUE --queue-num 200 --queue-bypass;
-        iptables -t mangle -I PREROUTING -p $1 $iptSPort $cbReply -j NFQUEUE --queue-num 200 --queue-bypass;
-    }
+    # shellcheck disable=SC2086
+    /system/bin/nfqws --debug=android --uid 0:3003 --daemon "$mark_option" --qnum=200 $NFQWS_OPT
+}
 
-    iptMultiPort() {
-        for current_port in $2; do
-            if [[ $current_port == *-* ]]; then
-                for i in $(seq ${current_port%-*} ${current_port#*-}); do 
-                    iptAdd "$1" "$i"; 
-                done
-            else 
-                iptAdd "$1" "$current_port"; 
-            fi
+stop_service() {
+    echo "Stop service"
+    kill "nfqws"
+    clean_iptables
+}
+
+restart_service() {
+    echo "Restart service"
+    stop_service
+    start_service
+}
+
+status_service() {
+    echo "Status service"
+    pgrep "nfqws"
+}
+
+setup_iptables() {
+    connbytes_args=""
+    mark_args=""
+
+    if [ "$CONNBYTES_SUPPORT" -eq 1 ]; then
+        connbytes_args="-m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:6"
+    fi
+
+    if [ "$MARK_SUPPORT" -eq 1 ]; then
+        mark_args="-m mark ! --mark 0x40000000/0x40000000"
+    fi
+
+    if [ "$MULTIPORT_SUPPORT" -eq 1 ]; then
+        # shellcheck disable=SC2086
+        iptables -t mangle -I POSTROUTING -p tcp -m multiport --dports "$NFQWS_PORTS_TCP" -j NFQUEUE $mark_args $connbytes_args --queue-num 200 --queue-bypass
+        # shellcheck disable=SC2086
+        iptables -t mangle -I POSTROUTING -p udp -m multiport --dports "$NFQWS_PORTS_UDP" -j NFQUEUE $mark_args $connbytes_args --queue-num 200 --queue-bypass
+    else
+        for port in $NFQWS_PORTS_TCP; do
+            # shellcheck disable=SC2086
+            iptables -t mangle -I POSTROUTING -p tcp --dport "$port" -j NFQUEUE $mark_args $connbytes_args --queue-num 200 --queue-bypass
         done
-    }
 
-    tcp_ports="$(echo $config | grep -oE 'filter-tcp=[0-9,-]+' | sed -e 's/.*=//g' -e 's/,/\n/g' -e 's/ /,/g' | sort -un)";
-    udp_ports="$(echo $config | grep -oE 'filter-udp=[0-9,-]+' | sed -e 's/.*=//g' -e 's/,/\n/g' -e 's/ /,/g' | sort -un)";
-    iptMultiPort "tcp" "$tcp_ports";
-    iptMultiPort "udp" "$udp_ports";
+        for port in $NFQWS_PORTS_UDP; do
+            # shellcheck disable=SC2086
+            iptables -t mangle -I POSTROUTING -p udp --dport "$port" -j NFQUEUE $mark_args $connbytes_args --queue-num 200 --queue-bypass
+        done
+    fi
+    sysctl -w net.netfilter.nf_conntrack_tcp_be_liberal=1
+}
 
-    $nfqws --uid=0:0 --qnum=200 $config > /dev/null & 
-    echo "zapret service started!"; return 0; fi
+clean_iptables() {
+    iptables -t mangle -F POSTROUTING
+}
 
-if [ "$1" == "stop" ]; then
-iptables -t mangle -F PREROUTING; iptables -t mangle -F POSTROUTING;
-kill "$(pidof $nfqws)";
-echo "zapret service stopped!"; return 0; fi;
-
-if [ "$1" == "autostart-on" ]; then
-touch /data/adb/modules/zapret/autostart; fi;
-
-if [ "$1" == "autostart-off" ]; then
-rm /data/adb/modules/zapret/autostart; fi;
-
-if [ -z "$1" ]; then
-echo "Usage: zapret start, zapret stop, zapret autostart-on, zapret autostart-off. Based on https://github.com/bol-van/zapret/nfqws"; fi;
+case "$1" in
+start)
+    start_service
+    ;;
+stop)
+    stop_service
+    ;;
+enable)
+    enable_service
+    ;;
+disable)
+    disable_service
+    ;;
+restart)
+    restart_service
+    ;;
+status)
+    status_service
+    ;;
+*)
+    echo "$HOSTLIST"
+    echo "$NFQWS_PORTS_TCP"
+    echo "$NFQWS_PORTS_UDP"
+    echo "$NFQWS_OPT"
+    ;;
+esac

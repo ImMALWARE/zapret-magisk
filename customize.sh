@@ -7,22 +7,27 @@ set_binary() {
 set_list() {
 	ui_print "- Создание директории для zapret"
 	mkdir -p "/data/adb/zapret"
-	cp "$MODPATH/list/zapret-hosts-user.txt" "/data/adb/zapret/zapret-hosts-user.txt"
-	cp "$MODPATH/list/zapret-hosts-user-exclude.txt" "/data/adb/zapret/zapret-hosts-user-exclude.txt"
+	touch "/data/adb/zapret/zapret-hosts-user.txt"
+	touch "/data/adb/zapret/zapret-hosts-user-exclude.txt"
+	touch "/data/adb/zapret/zapret-hosts-auto.txt"
+	cp "$MODPATH/config.default" "/data/adb/zapret/config"
 }
 
 set_permission() {
 	ui_print "- Установка разрешений"
 	set_perm "$MODPATH/system/bin/zapret" 0 0 744
 	set_perm "$MODPATH/system/bin/nfqws" 0 0 744
+	set_perm "$MODPATH/list/zapret-hosts.txt" 0 0 666
+	set_perm "$MODPATH/list/zapret-hosts-exclude.txt" 0 0 666
 	set_perm "/data/adb/zapret/zapret-hosts-user.txt" 0 0 666
 	set_perm "/data/adb/zapret/zapret-hosts-user-exclude.txt" 0 0 666
+	set_perm "/data/adb/zapret/zapret-hosts-auto.txt" 0 0 666
+	set_perm "/data/adb/zapret/config" 0 0 766
 }
 
 cleanup() {
 	ui_print "- Очистка"
 	rm -rf "$MODPATH/binaries"
-	rm -rf "$MODPATH/list"
 }
 
 if [[ "$ARCH" != "arm" &&
@@ -40,4 +45,3 @@ fi
 
 set_permission
 cleanup
-
