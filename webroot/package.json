@@ -9,6 +9,7 @@
   "license": "GPL-3.0",
   "description": "",
   "dependencies": {
+    "bootstrap": "^5.3.7",
     "kernelsu": "^1.0.6"
   }
 }
