@@ -1,7 +1,10 @@
 # shellcheck disable=SC2148
 set_binary() {
+	mkdir -p "$MODPATH/system/bin"
 	ui_print "- Копирование nfqws"
 	cp "$MODPATH/binaries/nfqws_$ARCH" "$MODPATH/system/bin/nfqws"
+	ui_print "- Копирование zapret"
+	cp "$MODPATH/binaries/zapret_$ARCH" "$MODPATH/system/bin/zapret"
 }
 
 set_list() {
@@ -10,7 +13,6 @@ set_list() {
 	touch "/data/adb/zapret/zapret-hosts-user.txt"
 	touch "/data/adb/zapret/zapret-hosts-user-exclude.txt"
 	touch "/data/adb/zapret/zapret-hosts-auto.txt"
-	cp "$MODPATH/config.default" "/data/adb/zapret/config"
 }
 
 set_permission() {
@@ -22,7 +24,6 @@ set_permission() {
 	set_perm "/data/adb/zapret/zapret-hosts-user.txt" 0 0 666
 	set_perm "/data/adb/zapret/zapret-hosts-user-exclude.txt" 0 0 666
 	set_perm "/data/adb/zapret/zapret-hosts-auto.txt" 0 0 666
-	set_perm "/data/adb/zapret/config" 0 0 766
 }
 
 cleanup() {
