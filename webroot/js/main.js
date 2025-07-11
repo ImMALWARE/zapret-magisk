@@ -1,3 +1,4 @@
+const header = document.getElementById('header');
 const startButton = document.getElementById('startButton');
 const stopButton = document.getElementById('stopButton');
 const enableButton = document.getElementById('enableButton');
@@ -6,6 +7,7 @@ const restartButton = document.getElementById('restartButton');
 const statusButton = document.getElementById('statusButton');
 
 function handleStart() {
+  header.textContent = 'Кнопка "start" нажата!'
   console.log('Кнопка "start" нажата!');
 }
 
