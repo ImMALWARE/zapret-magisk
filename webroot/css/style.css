@@ -23,3 +23,41 @@ body {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+:root {
+  --bs-primary: #376ebd;
+  --bs-font-primary: #fff;
+}
+
+label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn-primary {
+  /* Основной пастельный синий цвет для кнопки */
+  --bs-btn-bg: var(--bs-primary); /* Светлый пастельный аквамарин */
+  --bs-btn-border-color: var(--bs-primary); /* Граница такого же цвета */
+  --bs-btn-color: var(--bs-font-primary); /* Цвет текста: темно-серый для хорошего контраста */
+
+  /* Цвет при наведении (hover) */
+  --bs-btn-hover-bg: #2563BD; /* Чуть более насыщенный голубой при наведении (небесно-голубой) */
+  --bs-btn-hover-border-color: var(--bs-primary);
+  --bs-btn-hover-color: var(--bs-font-primary);
+
+  /* Цвет при активном состоянии (active) */
+  --bs-btn-active-bg: #2563BD; /* Еще более насыщенный синий при активации (корнфлауэр-синий) */
+  --bs-btn-active-border-color: var(--bs-primary);
+  --bs-btn-active-color: var(--bs-font-primary); /* Белый текст для лучшего контраста на более темном фоне */
+
+  /* Цвет при фокусе (focus) */
+  /* RGB для тени фокуса, основанный на основном пастельном цвете. */
+  --bs-btn-focus-shadow-rgb: 176, 224, 230;
+
+  /* Цвет для отключенной кнопки (disabled) */
+  --bs-btn-disabled-bg: #376ebd90;
+  --bs-btn-disabled-border-color: #376ebd90;
+  --bs-btn-disabled-color: var(--bs-font-primary);
+}

@@ -1,5 +1,7 @@
 {
   "tabWidth": 2,
   "useTabs": false,
-  "semi": true
+  "semi": true,
+  "printWidth": 180,
+  "htmlWhitespaceSensitivity": "ignore"
 }

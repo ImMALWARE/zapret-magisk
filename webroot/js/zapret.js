@@ -33,6 +33,21 @@ class Zapret {
     }
   }
 
+  async restart() {
+    try {
+      var { stdout, stderr, errno } = await exec("zapret restart");
+      if (errno !== 0) {
+        console.error(`code: ${errno}, stderr:\n${stderr}`);
+        modal(`Ошибка shell. Код: ${errno}`, stderr);
+      }
+
+      modal("Zapret перезапущен", stdout);
+    } catch (error) {
+      console.error(`Error: ${error}`);
+      modal("Ошибка javascript", error);
+    }
+  }
+
   async isRunning() {
     try {
       const { stdout, stderr, errno } = await exec("zapret status");
