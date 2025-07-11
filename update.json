@@ -1,6 +1,6 @@
 {
-    "version": "1.4",
-    "versionCode": 15,
-    "zipUrl": "https://github.com/NTeditor/zapret-magisk/releases/download/v1.0/zapret_module.zip",
-    "changelog": "https://raw.githubusercontent.com/ImMALWARE/zapret-magisk/master/README.md"
+    "version": "v0.0.1-dev-1",
+    "versionCode": 2,
+    "zipUrl": "https://github.com/NTeditor/zapret-magisk/releases/download/v0.0.1-dev-1/zapret_module.zip",
+    "changelog": "https://raw.githubusercontent.com/NTeditor/zapret-magisk/refs/heads/dev/update.json"
 }
