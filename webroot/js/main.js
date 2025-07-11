@@ -10,15 +10,6 @@ const statusButton = document.getElementById("statusButton");
 
 const zapret = new Zapret();
 
-function isAndroid() {
-  const userAgent = navigator.userAgent;
-  console.log("User-Agent:", userAgent);
-  if (/Android/i.test(userAgent)) {
-    return true;
-  }
-  return false;
-}
-
 function handleStart() {
   console.log('Кнопка "start" нажата!');
 }
@@ -40,10 +31,6 @@ function handleRestart() {
 }
 
 async function handleStatus() {
-  if (isAndroid()) {
-    header.textContent = "Zapret работает";
-  }
-
   var isRunning = await zapret.isRunning();
 
   if (isRunning === true) {
