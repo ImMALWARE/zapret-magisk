@@ -13,27 +13,27 @@
     <link rel="shortcut icon" href="/favicon.png" type="image">
   </head>
   <body class="p-3">
-    <header class="container text-center mt-5 mb-4">
-      <h1 id="header">Загрузка статуса Zapret...</h1>
+    <header class="container text-center mt-4 mb-4">
+      <h1 id="header" class="fs-4">Загрузка статуса Zapret...</h1>
     </header>
     <div class="container text-center mt-5">
       <div class="d-grid gap-3 col-6 mx-auto mb-4">
         <button id="startButton" class="btn btn-success btn-lg">
-          Запустить Zapret
+          Запустить
         </button>
         <button id="stopButton" class="btn btn-danger btn-lg">
-          Остановить Zapret
+          Остановить
         </button>
         <button id="statusButton" class="btn btn-info btn-lg">
-          Проверить статус
+          Проверить
         </button>
       </div>
       <div class="d-grid gap-2 col-4 mx-auto">
         <button id="enableButton" class="btn btn-outline-primary">
-          Включить автозапуск
+          Включить
         </button>
         <button id="disableButton" class="btn btn-outline-danger">
-          Отключить автозапуск
+          Отключить
         </button>
         <button id="restartButton" class="btn btn-warning">
           Перезапустить
@@ -45,13 +45,13 @@
       class="modal fade"
       id="output-modal"
       tabindex="-1"
-      aria-labelledby="output-title"
+      aria-labelledby="output-modal-title"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="output-modal-title">...</h1>
+            <h2 class="modal-title break-word small" id="output-modal-title">...</h2>
             <button
               type="button"
               class="btn-close"
@@ -59,7 +59,7 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body" id="output-modal-body">...</div>
+          <p class="modal-body break-word small" id="output-modal-body">...</p>
         </div>
       </div>
     </div>
