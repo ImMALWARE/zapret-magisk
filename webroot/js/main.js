@@ -10,8 +10,8 @@ const statusButton = document.getElementById("statusButton");
 
 const zapret = new Zapret();
 
-function handleStart() {
-  console.log('Кнопка "start" нажата!');
+async function handleStart() {
+  await zapret.start();
 }
 
 async function handleStop() {
@@ -39,7 +39,7 @@ async function handleStatus() {
     header.textContent = "Zapret не работает";
   } else {
     header.textContent = "Произошла ошибка!";
-    console.log(zapret.isRunning());
+    console.log(isRunning);
   }
 }
 
