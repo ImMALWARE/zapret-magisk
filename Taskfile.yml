@@ -1,0 +1,89 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  ANDROID_API: "21"
+  CGO: "1"
+  
+env:
+  GOOS: "android"
+
+tasks:
+  clean:
+    prompt:
+      - Если у вас windows yбедитесь что вы используете git bash!
+    cmds:
+      - |
+        if [ -d "./build" ]; then
+          rm -r "./build"
+        fi
+        if [ -d "./src/zapret-ux/build" ]; then
+          rm -r "./src/zapret-ux/build"
+        fi
+
+  build:
+    prompt:
+      - Если у вас windows yбедитесь что вы используете git bash!
+    deps:
+      - build_ux
+    cmds:
+      - |
+        mkdir -p "./build/binaries/zapret"
+        cp -r "./module/." "./build"
+        cp "./src/zapret-ux/build/*" "./build/binaries/zapret/"
+
+  build_ux:
+    deps:
+      - build_ux_arm64
+      - build_ux_arm
+      - build_ux_x64
+      - build_ux_x86
+
+  build_ux_arm64:
+    dir: "./src/zapret-ux"
+    env:
+      GOARCH: "arm64"
+      CGO_ENABLED: "{{.CGO}}"
+      CC: "aarch64-linux-android{{.ANDROID_API}}-clang"
+      CXX: "aarch64-linux-android{{.ANDROID_API}}-clang++"
+    cmds:
+      - |
+        go mod tidy
+        go build -o build/zapret_arm64
+
+  build_ux_arm:
+    dir: "./src/zapret-ux"
+    env:
+      GOARCH: "arm"
+      CGO_ENABLED: "{{.CGO}}"
+      CC: "armv7a-linux-androideabi{{.ANDROID_API}}-clang"
+      CXX: "armv7a-linux-androideabi{{.ANDROID_API}}-clang++"
+    cmds:
+      - |
+        go mod tidy
+        go build -o build/zapret_arm
+
+  build_ux_x64:
+    dir: "./src/zapret-ux"
+    env:
+      GOARCH: "amd64"
+      CGO_ENABLED: "{{.CGO}}"
+      CC: "x86_64-linux-android{{.ANDROID_API}}-clang"
+      CXX: "x86_64-linux-android{{.ANDROID_API}}-clang++"
+    cmds:
+      - |
+        go mod tidy
+        go build -o build/zapret_x64
+
+  build_ux_x86:
+    dir: "./src/zapret-ux"
+    env:
+      GOARCH: "386"
+      CGO_ENABLED: "{{.CGO}}"
+      CC: "i686-linux-android{{.ANDROID_API}}-clang"
+      CXX: "i686-linux-android{{.ANDROID_API}}-clang++"
+    cmds:
+      - |
+        go mod tidy
+        go build -o build/zapret_x86
