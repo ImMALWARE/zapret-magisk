@@ -8,7 +8,7 @@
   </head>
   <body>
     <header>
-      <h1 class="title">Test</h1>
+      <h1 id="header-title" class="title">Test</h1>
     </header>
     <nav class="m l left">
       <a class="active" href="#">
@@ -23,11 +23,11 @@
       </a>
     </nav>
     <main class="responsive">
-      <button>Запустить</button>
-      <button disabled="true">Остоновить</button>
-      <button>Перезапустить</button>
-      <button>Обновить</button>
-      <label class="switch">
+      <button id="btn-start">Запустить</button>
+      <button id="btn-stop">Остоновить</button>
+      <button id="btn-restart">Перезапустить</button>
+      <button id="btn-status">Обновить</button>
+      <label id="switch-autostart" class="switch">
         <input type="checkbox" />
         <span></span>
       </label>
