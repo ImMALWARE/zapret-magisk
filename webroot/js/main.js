@@ -1,4 +1,5 @@
 import { Zapret } from "/js/zapret.js";
+import { Config } from "/js/config.js";
 
 const header = document.getElementById("header");
 const startButton = document.getElementById("startButton");
@@ -56,3 +57,5 @@ restartButton.addEventListener("click", handleRestart);
 statusButton.addEventListener("click", updateUI);
 
 document.addEventListener("DOMContentLoaded", updateUI);
+
+await Config.readConfig()
