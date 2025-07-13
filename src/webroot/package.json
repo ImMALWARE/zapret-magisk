@@ -1,5 +1,5 @@
 {
-  "name": "zapret-magisk-webroot",
+  "name": "webroot",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,7 +12,9 @@
     "vite": "^7.0.4"
   },
   "dependencies": {
-    "@material/web": "^2.3.0",
-    "kernelsu": "^1.0.6"
+    "@fontsource/montserrat": "^5.2.6",
+    "beercss": "^3.11.32",
+    "kernelsu": "^1.0.6",
+    "material-dynamic-colors": "^1.1.2"
   }
 }
