@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <header>
+      <h1 class="title">Test</h1>
+    </header>
+    <nav class="m l left">
+      <a class="active" href="#">
+        <i>home</i>
+        <span>Главное</span>
+      </a>
+    </nav>
+    <nav class="s bottom">
+      <a class="active" href="index.html">
+        <i>home</i>
+        <span>Главное</span>
+      </a>
+    </nav>
+    <main class="responsive">
+      <button>Запустить</button>
+      <button disabled="true">Остоновить</button>
+      <button>Перезапустить</button>
+      <button>Обновить</button>
+      <label class="switch">
+        <input type="checkbox" />
+        <span></span>
+      </label>
+    </main>
+    <dialog class="max" id="general-modal">
+      <h2 class="title" id="general-modal-title">...</h2>
+      <div id="general-modal-body">...</div>
+      <form method="dialog" class="right-align no-space">
+        <button class="transparent link">Закрыть</button>
+      </form>
+    </dialog>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
