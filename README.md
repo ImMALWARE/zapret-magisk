@@ -30,7 +30,7 @@
 
 `su -c zapret start` - запуск
 
-`su -c zapret start` - остановка
+`su -c zapret stop` - остановка
 
 `su -c zapret autostart-on` - включить автозапуск
 
