@@ -37,6 +37,8 @@ if [ "$1" == "start" ]; then
         iptDPort="--dport $2"; iptSPort="--sport $2";
         iptables -t mangle -I POSTROUTING -p $1 $iptDPort $cbOrig -j NFQUEUE --queue-num 200 --queue-bypass;
         iptables -t mangle -I PREROUTING -p $1 $iptSPort $cbReply -j NFQUEUE --queue-num 200 --queue-bypass;
+        ip6tables -t mangle -I POSTROUTING -p $1 $iptDPort $cbOrig -j NFQUEUE --queue-num 200 --queue-bypass;
+        ip6tables -t mangle -I PREROUTING -p $1 $iptSPort $cbReply -j NFQUEUE --queue-num 200 --queue-bypass;
     }
 
     iptMultiPort() {
@@ -61,6 +63,7 @@ if [ "$1" == "start" ]; then
 
 if [ "$1" == "stop" ]; then
     iptables -t mangle -F PREROUTING; iptables -t mangle -F POSTROUTING;
+    ip6tables -t mangle -F PREROUTING; ip6tables -t mangle -F POSTROUTING;
     kill "$(pidof nfqws)";
     echo "zapret service stopped!"; return 0;
 fi;
