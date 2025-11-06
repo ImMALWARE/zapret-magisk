@@ -1,80 +1,428 @@
 <!DOCTYPE html>
-<html lang="ru">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Настройка доменов - zapret</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zapret Domains</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
     <style>
-        @font-face {
-            font-family: "Google Sans";
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3Kwp5MKg.woff2) format("woff2");
-            unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        @font-face {
-            font-family: "Google Sans";
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3Owp4.woff2) format("woff2");
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
-        }
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
             user-select: none;
-            font-family: "Google Sans";
-        }
-        span:not(.bottom) {
-            word-break: break-all;
-            white-space: normal;
-        }
-        .input-field {
+            min-height: 100vh;
             display: flex;
-            margin-bottom: 300px;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            padding-top: 32px;
+            padding-bottom: 100px;
+            overflow-y: auto;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(111, 216, 111, 0.15);
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: rgba(20, 20, 20, 0.5);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #909090;
+            margin-bottom: 16px;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            width: fit-content;
+        }
+
+        .lang-btn {
+            background: rgba(111, 216, 111, 0.1);
+            color: #909090;
+            border: 1px solid rgba(111, 216, 111, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover,
+        .lang-btn.active {
+            background: rgba(111, 216, 111, 0.3);
+            color: #6FD86F;
+            border-color: #6FD86F;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(111, 216, 111, 0.1);
+            padding-bottom: 16px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #707070;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: #6FD86F;
+        }
+
+        .tab-btn.active {
+            color: #6FD86F;
+            border-bottom-color: #6FD86F;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .domains-list {
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .domain-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(111, 216, 111, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .domain-item:last-child {
+            border-bottom: none;
+        }
+
+        .domain-item:hover {
+            background: rgba(111, 216, 111, 0.08);
+        }
+
+        .domain-text {
+            font-family: "Courier New", monospace;
+            font-size: 13px;
+            color: #6FD86F;
+            word-break: break-all;
+        }
+
+        .delete-btn {
+            background: rgba(255, 64, 64, 0.1);
+            color: #ff4040;
+            border: 1px solid rgba(255, 64, 64, 0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 64, 64, 0.2);
+            border-color: #ff4040;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: #505050;
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        .input-section {
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            background: rgba(15, 15, 15, 0.8);
+            color: #ffffff;
+            border: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: rgba(111, 216, 111, 0.5);
+            background: rgba(15, 15, 15, 1);
+        }
+
+        input::placeholder {
+            color: #707070;
+        }
+
+        .add-btn {
+            background: #6FD86F;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(111, 216, 111, 0.4);
+            background: #7ae87a;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(111, 216, 111, 0.15);
+            background: #0a0a0a;
+            z-index: 1000;
+        }
+
+        nav a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 16px;
+            color: #707070;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #6FD86F;
+            border-bottom-color: #6FD86F;
+        }
+
+        nav i {
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 16px;
+                padding-top: 32px;
+                padding-bottom: 100px;
+            }
+
+            .input-section {
+                flex-direction: column;
+            }
         }
     </style>
+    <script src="i18n.js"></script>
+</head>
+<body>
+    <main>
+        <div class="header">
+            <h1 id="title">Domains</h1>
+            <p id="subtitle">DPI Bypass Module</p>
+            <div class="lang-selector">
+                <button class="lang-btn" id="lang-ru" onclick="setLanguage('ru')">РУ</button>
+                <button class="lang-btn" id="lang-en" onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('autohosts', this)">
+                <i class="material-icons">lock_open</i>
+                <span id="tab-autohosts">Autohosts</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('ignore', this)">
+                <i class="material-icons">visibility_off</i>
+                <span id="tab-ignore">Ignore</span>
+            </button>
+        </div>
+
+        <div id="autohosts" class="tab-content active">
+            <div class="domains-list" id="autohosts_list">
+                <div class="empty-state">
+                    <i class="material-icons">inbox</i>
+                    <p>Loading...</p>
+                </div>
+            </div>
+            <div class="input-section">
+                <input type="text" id="autohosts_add" placeholder="example.com">
+                <button class="add-btn" onclick="add_autohost(document.getElementById('autohosts_add').value)">
+                    <i class="material-icons">add</i>
+                    <span id="btn-add">Add</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="ignore" class="tab-content">
+            <div class="domains-list" id="ignore_list">
+                <div class="empty-state">
+                    <i class="material-icons">inbox</i>
+                    <p>Loading...</p>
+                </div>
+            </div>
+            <div class="input-section">
+                <input type="text" id="ignore_add" placeholder="example.com">
+                <button class="add-btn" onclick="add_ignore(document.getElementById('ignore_add').value)">
+                    <i class="material-icons">add</i>
+                    <span id="btn-add">Add</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <nav>
+        <a href="index.html">
+            <i class="material-icons">info</i>
+            <span id="nav-info">Info</span>
+        </a>
+        <a href="domains.html" class="active">
+            <i class="material-icons">domain</i>
+            <span id="nav-domains">Domains</span>
+        </a>
+        <a href="config.html">
+            <i class="material-icons">build</i>
+            <span id="nav-config">Config</span>
+        </a>
+        <a href="check.html">
+            <i class="material-icons">check_circle</i>
+            <span id="nav-check">Check</span>
+        </a>
+    </nav>
+
     <script type="module">
         import { exec } from '/kernelsu.js';
 
-        function open_tab(tab, el) {
-            document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('.page').forEach(e => e.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById(tab).classList.add('active')
+        function updateLanguage() {
+            const lang = getCurrentLanguage();
+            document.getElementById('nav-info').textContent = t('info');
+            document.getElementById('nav-domains').textContent = t('domains');
+            document.getElementById('nav-config').textContent = t('config');
+            document.getElementById('nav-check').textContent = t('check');
+            document.getElementById('tab-autohosts').textContent = t('autohosts');
+            document.getElementById('tab-ignore').textContent = t('ignore');
+            document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
         }
-        window.open_tab = open_tab;
+
+        updateLanguage();
+        window.addEventListener('storage', updateLanguage);
+
+        function switchTab(tab, btn) {
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            btn.classList.add('active');
+        }
+        window.switchTab = switchTab;
 
         exec("cat /data/adb/zapret/autohosts.txt").then(({ stdout }) => {
-        const domains = stdout
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
-
+            const domains = stdout.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            const list = document.getElementById('autohosts_list');
+            if (domains.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="material-icons">inbox</i><p>No domains</p></div>';
+                return;
+            }
+            list.innerHTML = '';
             for (const domain of domains) {
-                const li = document.createElement('li');
-                li.id = 'autohost_' + domain;
-                li.innerHTML = `<span>${domain}</span><div class="max"></div><button class="button small" onclick="del_autohost('${domain}')"><i>delete</i></button>`;
-                autohosts_list.appendChild(li);
+                const item = document.createElement('div');
+                item.className = 'domain-item';
+                item.id = 'autohost_' + domain;
+                item.innerHTML = `<span class="domain-text">${domain}</span><button class="delete-btn" onclick="del_autohost('${domain}')"><i class="material-icons">delete</i></button>`;
+                list.appendChild(item);
             }
         });
 
         exec("cat /data/adb/zapret/ignore.txt").then(({ stdout }) => {
-        const domains = stdout
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
-
+            const domains = stdout.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            const list = document.getElementById('ignore_list');
+            if (domains.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="material-icons">inbox</i><p>No domains</p></div>';
+                return;
+            }
+            list.innerHTML = '';
             for (const domain of domains) {
-                const li = document.createElement('li');
-                li.id = 'ignore_' + domain;
-                li.innerHTML = `<span>${domain}</span><div class="max"></div><button class="button small" onclick="del_ignore('${domain}')"><i>delete</i></button>`;
-                ignore_list.appendChild(li);
+                const item = document.createElement('div');
+                item.className = 'domain-item';
+                item.id = 'ignore_' + domain;
+                item.innerHTML = `<span class="domain-text">${domain}</span><button class="delete-btn" onclick="del_ignore('${domain}')"><i class="material-icons">delete</i></button>`;
+                list.appendChild(item);
             }
         });
 
@@ -82,88 +430,57 @@
             domain = domain.trim().toLowerCase();
             if (domain === '') return;
             exec(`echo "${domain}" >> /data/adb/zapret/autohosts.txt`).then(() => {
-                autohosts_add.value = '';
-                const li = document.createElement('li');
-                li.id = 'autohost_' + domain;
-                li.innerHTML = `<span>${domain}</span><div class="max"></div><button class="button small" onclick="del_autohost('${domain}')"><i>delete</i></button>`;
-                autohosts_list.appendChild(li);
+                document.getElementById('autohosts_add').value = '';
+                const list = document.getElementById('autohosts_list');
+                if (list.querySelector('.empty-state')) list.innerHTML = '';
+                const item = document.createElement('div');
+                item.className = 'domain-item';
+                item.id = 'autohost_' + domain;
+                item.innerHTML = `<span class="domain-text">${domain}</span><button class="delete-btn" onclick="del_autohost('${domain}')"><i class="material-icons">delete</i></button>`;
+                list.appendChild(item);
             });
         }
         window.add_autohost = add_autohost;
+
         function del_autohost(domain) {
             exec(`sed -i '/^${domain}$/d' /data/adb/zapret/autohosts.txt`).then(() => {
                 const li = document.getElementById('autohost_' + domain);
                 if (li) li.remove();
+                const list = document.getElementById('autohosts_list');
+                if (list.children.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><i class="material-icons">inbox</i><p>No domains</p></div>';
+                }
             });
         }
         window.del_autohost = del_autohost;
+
         function add_ignore(domain) {
             domain = domain.trim().toLowerCase();
             if (domain === '') return;
             exec(`echo "${domain}" >> /data/adb/zapret/ignore.txt`).then(() => {
-                ignore_add.value = '';
-                const li = document.createElement('li');
-                li.id = 'ignore_' + domain;
-                li.innerHTML = `<span>${domain}</span><div class="max"></div><button class="button small" onclick="del_ignore('${domain}')"><i>delete</i></button>`;
-                ignore_list.appendChild(li);
+                document.getElementById('ignore_add').value = '';
+                const list = document.getElementById('ignore_list');
+                if (list.querySelector('.empty-state')) list.innerHTML = '';
+                const item = document.createElement('div');
+                item.className = 'domain-item';
+                item.id = 'ignore_' + domain;
+                item.innerHTML = `<span class="domain-text">${domain}</span><button class="delete-btn" onclick="del_ignore('${domain}')"><i class="material-icons">delete</i></button>`;
+                list.appendChild(item);
             });
         }
         window.add_ignore = add_ignore;
+
         function del_ignore(domain) {
             exec(`sed -i '/^${domain}$/d' /data/adb/zapret/ignore.txt`).then(() => {
                 const li = document.getElementById('ignore_' + domain);
                 if (li) li.remove();
+                const list = document.getElementById('ignore_list');
+                if (list.children.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><i class="material-icons">inbox</i><p>No domains</p></div>';
+                }
             });
         }
         window.del_ignore = del_ignore;
     </script>
-</head>
-
-<body>
-    <div>
-        <nav class="m l left">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a class="active" href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <nav class="s bottom">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a class="active" href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <main class="responsive">
-            <nav class="tabbed">
-                <a class="active tab" onclick="open_tab('autohosts', this)"><i>lock_open</i><span>autohosts</span></a>
-                <a class="tab" onclick="open_tab('ignore', this)"><i>visibility_off</i><span>ignore</span></a>
-            </nav>
-            <div class="page padding active" id="autohosts">
-                <ul class="list border" id="autohosts_list">
-                </ul>
-                <div class="input-field">
-                    <div class="field label border" style="display: flex; flex: 1;">
-                        <input id="autohosts_add" type="text" placeholder=" ">
-                        <label>Новый домен</label>
-                    </div>
-                    <button class="button circle" style="margin-top: 3px;" onclick="add_autohost(autohosts_add.value)"><i>add</i></button>
-                </div>
-            </div>
-            <div class="page padding" id="ignore">
-                <ul class="list border" id="ignore_list">
-                    </ul>
-                    <div class="input-field">
-                    <div class="field label border" style="display: flex; flex: 1;">
-                        <input id="ignore_add" type="text" placeholder=" ">
-                        <label>Новый домен</label>
-                    </div>
-                    <button class="button circle" style="margin-top: 3px;" onclick="add_ignore(ignore_add.value)"><i>add</i></button>
-                </div>
-                
-            </div>
-        </main>
-    </div>
-
 </body>
-
 </html>
