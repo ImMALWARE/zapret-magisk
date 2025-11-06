@@ -1,58 +1,353 @@
 <!DOCTYPE html>
-<html lang="ru">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Настройка конфига - zapret</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zapret Config</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
     <style>
-        @font-face {
-            font-family: "Google Sans";
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3Kwp5MKg.woff2) format("woff2");
-            unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116
-        }
-
-        @font-face {
-            font-family: "Google Sans";
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3Owp4.woff2) format("woff2");
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
             user-select: none;
-            font-family: "Google Sans";
-            height: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            padding-top: 32px;
+            padding-bottom: 100px;
+            overflow-y: auto;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 8px;
+            background: rgba(20, 20, 20, 0.5);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #909090;
+            margin-bottom: 16px;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            width: fit-content;
+        }
+
+        .lang-btn {
+            background: rgba(111, 216, 111, 0.1);
+            color: #909090;
+            border: 1px solid rgba(111, 216, 111, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover,
+        .lang-btn.active {
+            background: rgba(111, 216, 111, 0.3);
+            color: #6FD86F;
+            border-color: #6FD86F;
+        }
+
+        .editor-panel {
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         button {
-            margin-top: 15px
+            background: #6FD86F;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
         }
 
-        .textarea {
-            height: 90% !important;
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(111, 216, 111, 0.4);
+            background: #7ae87a;
+        }
+
+        button i {
+            font-size: 16px;
+        }
+
+        textarea {
+            flex: 1;
+            background: rgba(15, 15, 15, 0.8);
+            color: #ffffff;
+            border: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            resize: none;
+            transition: all 0.3s ease;
+            min-height: 300px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: rgba(111, 216, 111, 0.5);
+        }
+
+        .help-section {
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .help-section h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #6FD86F;
+            font-weight: 600;
+        }
+
+        .help-item {
+            margin-bottom: 10px;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            color: #909090;
+            align-items: flex-start;
+        }
+
+        .help-item code {
+            background: rgba(111, 216, 111, 0.1);
+            color: #6FD86F;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            white-space: nowrap;
+        }
+
+        /* Added span styling to allow text wrapping properly */
+        .help-item span {
+            word-break: break-word;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(111, 216, 111, 0.15);
+            background: #0a0a0a;
+            z-index: 1000;
+        }
+
+        nav a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 16px;
+            color: #707070;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #6FD86F;
+            border-bottom-color: #6FD86F;
+        }
+
+        nav i {
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 16px;
+                padding-top: 32px;
+                padding-bottom: 100px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
+    <script src="i18n.js"></script>
+</head>
+<body>
+    <main>
+        <div class="header">
+            <h1 id="config-title">Config</h1>
+            <p id="subtitle">DPI Bypass Module</p>
+            <div class="lang-selector">
+                <button class="lang-btn" id="lang-ru" onclick="setLanguage('ru')">РУ</button>
+                <button class="lang-btn" id="lang-en" onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
+
+        <div class="editor-panel">
+            <div class="button-group">
+                <button onclick="save_config()">
+                    <i class="material-icons">save</i>
+                    <span id="btn-save">Save</span>
+                </button>
+                <button onclick="undo_config()">
+                    <i class="material-icons">undo</i>
+                    <span id="btn-undo">Undo</span>
+                </button>
+                <button onclick="restart_zapret()">
+                    <i class="material-icons">refresh</i>
+                    <span id="btn-restart">Restart</span>
+                </button>
+            </div>
+            <textarea id="configtext" placeholder="Loading configuration..."></textarea>
+        </div>
+
+        <div class="help-section">
+            <h3 id="help-title">Variable Help</h3>
+            <div class="help-item">
+                <code>{'{'}{hosts}{'}'}</code>
+                <span id="help-hosts"></span>
+            </div>
+            <div class="help-item">
+                <code>{'{'}{ignore}{'}'}</code>
+                <span id="help-ignore"></span>
+            </div>
+            <div class="help-item">
+                <code>{'{'}{youtube}{'}'}</code>
+                <span id="help-youtube"></span>
+            </div>
+            <div class="help-item">
+                <code>{'{'}{quicgoogle}{'}'}</code>
+                <span id="help-quic"></span>
+            </div>
+            <div class="help-item">
+                <code>{'{'}{tlsgoogle}{'}'}</code>
+                <span id="help-tls"></span>
+            </div>
+        </div>
+    </main>
+
+    <nav>
+        <a href="index.html">
+            <i class="material-icons">info</i>
+            <span id="nav-info">Info</span>
+        </a>
+        <a href="domains.html">
+            <i class="material-icons">domain</i>
+            <span id="nav-domains">Domains</span>
+        </a>
+        <a href="config.html" class="active">
+            <i class="material-icons">build</i>
+            <span id="nav-config">Config</span>
+        </a>
+        <a href="check.html">
+            <i class="material-icons">check_circle</i>
+            <span id="nav-check">Check</span>
+        </a>
+    </nav>
+
     <script type="module">
         import { exec, toast } from '/kernelsu.js';
-        function undo() {
+
+        function updateLanguage() {
+            const lang = getCurrentLanguage();
+            document.getElementById('nav-info').textContent = t('info');
+            document.getElementById('nav-domains').textContent = t('domains');
+            document.getElementById('nav-config').textContent = t('config');
+            document.getElementById('nav-check').textContent = t('check');
+            document.getElementById('config-title').textContent = t('configTitle');
+            document.getElementById('btn-save').textContent = t('save');
+            document.getElementById('btn-undo').textContent = t('undo');
+            document.getElementById('btn-restart').textContent = t('restart');
+            document.getElementById('help-title').textContent = t('configHelp');
+            document.getElementById('help-hosts').textContent = t('hostsVar');
+            document.getElementById('help-ignore').textContent = t('ignoreVar');
+            document.getElementById('help-youtube').textContent = t('youtubeVar');
+            document.getElementById('help-quic').textContent = t('quicGoogleVar');
+            document.getElementById('help-tls').textContent = t('tlsGoogleVar');
+            document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        }
+
+        updateLanguage();
+        window.addEventListener('storage', updateLanguage);
+
+        exec("cat /data/adb/zapret/config.txt").then(({ stdout }) => {
+            document.getElementById('configtext').value = stdout;
+        });
+
+        function undo_config() {
             exec("cat /data/adb/zapret/config.txt").then(({ stdout }) => {
-                configtext.value = stdout;
+                document.getElementById('configtext').value = stdout;
             });
         }
-        undo();
-        window.undo = undo;
+        window.undo_config = undo_config;
 
-        function save(config) {
-            config = config
+        function save_config() {
+            const config = document.getElementById('configtext').value
                 .split('\n')
                 .map(line => line
                     .replace(/--wf-(tcp|udp)=[^ ]+/g, '')
@@ -62,14 +357,14 @@
                 )
                 .join('\n');
             if (config.length === 0) return;
-            configtext.value = config;
-            exec(`echo "${config}" > /data/adb/zapret/config.txt`).then(() => {
-                toast("Сохранено");
+            document.getElementById('configtext').value = config;
+            exec(`echo "${config.replace(/"/g, '\\"')}" > /data/adb/zapret/config.txt`).then(() => {
+                toast(t('saved'));
             });
         }
-        window.save = save;
+        window.save_config = save_config;
 
-        function restart() {
+        function restart_zapret() {
             exec("zapret stop").then(({ stdout }) => {
                 toast(stdout);
             });
@@ -77,55 +372,7 @@
                 toast(stdout);
             });
         }
-        window.restart = restart;
+        window.restart_zapret = restart_zapret;
     </script>
-</head>
-
-<body>
-    <div>
-        <nav class="m l left">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a class="active" href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <nav class="s bottom">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a class="active" href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <main class="responsive" style="overflow-y: auto;">
-            <div style="display: flex; flex-direction: column; height: 100%;">
-                <h5>Конфиг zapret</h5>
-                <div class="field textarea round border extra">
-                    <textarea id="configtext"></textarea>
-                </div>
-                <div style="margin-bottom: 30px;">
-                    <button onclick="save(configtext.value)">
-                        <i>save</i>
-                        <span>Сохранить</span>
-                    </button>
-                    <button onclick="undo()">
-                        <i>undo</i>
-                        <span>Отменить</span>
-                    </button>
-                    <button onclick="restart()">
-                        <i>replay</i>
-                        <span>Перезапустить zapret</span>
-                    </button>
-                </div>
-            </div>
-             <div>
-                <p><code>{hosts}</code> — подставит путь к <code>autohosts.txt</code></p>
-                <p><code>{ignore}</code> — подставит путь к <code>ignore.txt</code></p>
-                <p><code>{youtube}</code> — подставит путь к <code>/etc/youtube.txt</code></p>
-                <p><code>{quicgoogle}</code> — подставит путь к <code>/etc/quic_initial_www_google_com.bin</code></p>
-                <p><code>{tlsgoogle}</code> — подставит путь к <code>/etc/tls_clienthello_www_google_com.bin</code></p>
-            </div>
-        </main>
-    </div>
-
 </body>
-
 </html>
