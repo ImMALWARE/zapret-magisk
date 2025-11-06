@@ -1,128 +1,389 @@
 <!DOCTYPE html>
-<html lang="ru">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Настройка zapret</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zapret Settings</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
     <style>
-        @font-face {
-            font-family: "Google Sans";
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3Kwp5MKg.woff2) format("woff2");
-            unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116
-        }
-
-        @font-face {
-            font-family: "Google Sans";
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3Owp4.woff2) format("woff2");
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
             user-select: none;
-            font-family: "Google Sans";
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            padding-top: 32px;
+            padding-bottom: 100px;
+            overflow-y: auto;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(111, 216, 111, 0.15);
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: rgba(20, 20, 20, 0.5);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #909090;
+        }
+
+        /* Updated accent color from C9DABF to bright lime green #6FD86F */
+        .status-card {
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(111, 216, 111, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-card:hover {
+            border-color: rgba(111, 216, 111, 0.5);
+            background: rgba(25, 25, 25, 0.8);
+        }
+
+        .status-icon {
+            font-size: 48px;
+            color: #6FD86F;
+            margin-bottom: 16px;
+        }
+
+        .status-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .status-desc {
+            font-size: 13px;
+            color: #909090;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #6FD86F;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 32px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(111, 216, 111, 0.4);
+            background: #7ae87a;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button i {
+            font-size: 18px;
+        }
+
+        .settings-row {
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(111, 216, 111, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .settings-row:hover {
+            border-color: rgba(111, 216, 111, 0.3);
+            background: rgba(25, 25, 25, 0.8);
+        }
+
+        .settings-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .settings-description {
+            font-size: 12px;
+            color: #909090;
+            margin-top: 4px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: #333;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(111, 216, 111, 0.2);
+        }
+
+        .toggle input {
+            display: none;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: #6FD86F;
+            transform: translateX(22px);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(111, 216, 111, 0.15);
+            background: #0a0a0a;
+            z-index: 1000;
+        }
+
+        nav a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 16px;
+            color: #707070;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #6FD86F;
+            border-bottom-color: #6FD86F;
+        }
+
+        nav i {
+            font-size: 24px;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            width: fit-content;
+        }
+
+        .lang-btn {
+            background: rgba(111, 216, 111, 0.1);
+            color: #909090;
+            border: 1px solid rgba(111, 216, 111, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover,
+        .lang-btn.active {
+            background: rgba(111, 216, 111, 0.3);
+            color: #6FD86F;
+            border-color: #6FD86F;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 16px;
+                padding-top: 32px;
+                padding-bottom: 100px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
         }
     </style>
+    <script src="i18n.js"></script>
+</head>
+<body>
+    <main>
+        <div class="header">
+            <h1 id="title">Zapret Settings</h1>
+            <p id="subtitle">DPI Bypass Module</p>
+            <div class="lang-selector">
+                <button class="lang-btn" id="lang-ru" onclick="setLanguage('ru')">РУ</button>
+                <button class="lang-btn" id="lang-en" onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <div class="material-icons status-icon" id="main_icon">hourglass_empty</div>
+            <div class="status-text" id="main_status">...</div>
+            <div class="status-desc" id="status_desc">Loading status...</div>
+            <button id="main_button" onclick="start_stop()">
+                <i class="material-icons" id="main_btn_icon">play_arrow</i>
+                <span id="main_note">Start</span>
+            </button>
+        </div>
+
+        <div class="settings-row">
+            <div>
+                <div class="settings-label" id="autostart_label">Autostart</div>
+                <div class="settings-description" id="autostart_desc">...</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" id="autostart" onchange="manage_autostart(this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </main>
+
+    <nav>
+        <a href="index.html" class="active">
+            <i class="material-icons">info</i>
+            <span id="nav-info">Info</span>
+        </a>
+        <a href="domains.html">
+            <i class="material-icons">domain</i>
+            <span id="nav-domains">Domains</span>
+        </a>
+        <a href="config.html">
+            <i class="material-icons">build</i>
+            <span id="nav-config">Config</span>
+        </a>
+        <a href="check.html">
+            <i class="material-icons">check_circle</i>
+            <span id="nav-check">Check</span>
+        </a>
+    </nav>
+
     <script type="module">
         import { exec, toast } from '/kernelsu.js';
 
+        function updateLanguage() {
+            const lang = getCurrentLanguage();
+            document.getElementById('nav-info').textContent = t('info');
+            document.getElementById('nav-domains').textContent = t('domains');
+            document.getElementById('nav-config').textContent = t('config');
+            document.getElementById('nav-check').textContent = t('check');
+            document.getElementById('autostart_label').textContent = t('autostart');
+            document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        }
+
+        updateLanguage();
+        window.addEventListener('storage', updateLanguage);
+
         exec("zapret status").then(({ stdout }) => {
             if (stdout.includes("is running")) {
-                main_status.innerText = 'zapret работает';
-                main_icon.innerText = 'stop'
-                main_note.innerText = 'Остановить'
+                document.getElementById('main_status').innerText = t('zapretRunning');
+                document.getElementById('status_desc').innerText = 'Module is active and filtering';
+                document.getElementById('main_icon').innerText = 'check_circle';
+                document.getElementById('main_note').innerText = t('stop');
+                document.getElementById('main_button').querySelector('i').innerText = 'stop';
             } else {
-                main_status.innerText = 'zapret не работает';
-                main_icon.innerText = 'play_arrow'
-                main_note.innerText = 'Запустить'
+                document.getElementById('main_status').innerText = t('zapretNotRunning');
+                document.getElementById('status_desc').innerText = 'Module is inactive';
+                document.getElementById('main_icon').innerText = 'error_outline';
+                document.getElementById('main_note').innerText = t('start');
+                document.getElementById('main_button').querySelector('i').innerText = 'play_arrow';
             }
         });
+
         exec('[ -f "/data/adb/zapret/autostart" ] && echo "true" || echo "false"').then(({ stdout }) => {
-            autostart.checked = stdout;
+            document.getElementById('autostart').checked = stdout.trim() === 'true';
+            document.getElementById('autostart_desc').innerText = stdout.trim() === 'true' ? t('enabled') : t('disabled');
         });
+
         function start_stop() {
-            if (main_note.innerText == 'Остановить') {
+            if (document.getElementById('main_note').innerText == t('stop')) {
                 exec("zapret stop").then(({ stdout }) => {
                     toast(stdout);
                     if (stdout.includes("stopped")) {
-                        main_status.innerText = 'zapret не работает';
-                        main_icon.innerText = 'play_arrow'
-                        main_note.innerText = 'Запустить'
+                        document.getElementById('main_status').innerText = t('zapretNotRunning');
+                        document.getElementById('status_desc').innerText = 'Module is inactive';
+                        document.getElementById('main_icon').innerText = 'error_outline';
+                        document.getElementById('main_note').innerText = t('start');
+                        document.getElementById('main_button').querySelector('i').innerText = 'play_arrow';
                     }
                 });
             } else {
                 exec("zapret start").then(({ stdout }) => {
                     toast(stdout);
                     if (stdout.includes("started")) {
-                        main_status.innerText = 'zapret работает';
-                        main_icon.innerText = 'stop'
-                        main_note.innerText = 'Остановить'
+                        document.getElementById('main_status').innerText = t('zapretRunning');
+                        document.getElementById('status_desc').innerText = 'Module is active and filtering';
+                        document.getElementById('main_icon').innerText = 'check_circle';
+                        document.getElementById('main_note').innerText = t('stop');
+                        document.getElementById('main_button').querySelector('i').innerText = 'stop';
                     }
                 });
             }
         }
         window.start_stop = start_stop;
+
         function manage_autostart(state) {
             if (state) {
                 exec("zapret autostart-on");
-                toast(stdout);
-                autostart_note.innerText = 'Включен';
+                document.getElementById('autostart_desc').innerText = t('enabled');
             } else {
                 exec("zapret autostart-off");
-                toast(stdout);
-                autostart_note.innerText = 'Выключен';
+                document.getElementById('autostart_desc').innerText = t('disabled');
             }
         }
         window.manage_autostart = manage_autostart;
     </script>
-</head>
-
-<body>
-    <div>
-        <nav class="m l left">
-            <a class="active" href="index.html"><i>info</i><span>Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span>Домены</span></a>
-            <a href="config.html"><i>build</i><span>Конфиг</span></a>
-            <a href="check.html"><i>check</i><span>Проверка</span></a>
-        </nav>
-        <nav class="s bottom">
-            <a class="active" href="index.html"><i>info</i><span>Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span>Домены</span></a>
-            <a href="config.html"><i>build</i><span>Конфиг</span></a>
-            <a href="check.html"><i>check</i><span>Проверка</span></a>
-        </nav>
-        <main class="responsive">
-            <div style="text-align: center;">
-            <h1 id="main_status">...</h1>
-            <button onclick="start_stop()">
-                <i id="main_icon"></i>
-                <span id="main_note">...</span>
-            </button>
-            <div class="field middle-align">
-                <nav>
-                    <div class="max">
-                        <h6>Автозапуск</h6>
-                        <div id="autostart_note"></div>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="autostart" onchange="manage_autostart(this.checked)">
-                        <span></span>
-                    </label>
-                </nav>
-            </div>
-            </div>
-        </main>
-    </div>
-    
 </body>
-
 </html>
