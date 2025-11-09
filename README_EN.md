@@ -1,5 +1,5 @@
 # Magisk module with zapret
-[README на русском](https://github.com/ImMALWARE/zapret-magisk/blob/master/README.md)
+[README на русском](https://github.com/ImMALWARE/zapret-magisk/blob/main/README.md)
 > Original zapret repository: https://github.com/bol-van/zapret
 
 1. Download the module here: https://github.com/ImMALWARE/zapret-magisk/releases/latest/download/zapret_module.zip
