@@ -1,0 +1,36 @@
+name: Release module
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Create module archive
+        run: |
+          zip -r zapret_module.zip common META-INF system webroot action.sh customize.sh module.prop service.sh uninstall.sh
+
+      - name: Get latest release tag
+        id: get_latest_tag
+        run: echo "next_tag=$(( $(git tag --sort=-version:refname | head -n 1) + 1 ))" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_latest_tag.outputs.next_tag }}
+          name: "Архив ${{ steps.get_latest_tag.outputs.next_tag }}"
+          body: |
+            Смотрите гайд в [README](https://github.com/ImMALWARE/zapret-magisk/blob/master/README.md)
+            See guide in [README in English](https://github.com/ImMALWARE/zapret-magisk/blob/master/README_EN.md)
+          files: zapret_module.zip

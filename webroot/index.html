@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
+    <script src="/i18n.js"></script>
     <style>
         @font-face {
             font-family: "Google Sans";
@@ -37,35 +38,35 @@
 
         exec("zapret status").then(({ stdout }) => {
             if (stdout.includes("is running")) {
-                main_status.innerText = 'zapret работает';
+                main_status.innerText = t('zapret_working');
                 main_icon.innerText = 'stop'
-                main_note.innerText = 'Остановить'
+                main_note.innerText = t('stop');
             } else {
-                main_status.innerText = 'zapret не работает';
+                main_status.innerText = t('not_working');
                 main_icon.innerText = 'play_arrow'
-                main_note.innerText = 'Запустить'
+                main_note.innerText = t('start');
             }
         });
         exec('[ -f "/data/adb/zapret/autostart" ] && echo "true" || echo "false"').then(({ stdout }) => {
             autostart.checked = stdout;
         });
         function start_stop() {
-            if (main_note.innerText == 'Остановить') {
+            if (main_note.innerText == t('stop')) {
                 exec("zapret stop").then(({ stdout }) => {
                     toast(stdout);
                     if (stdout.includes("stopped")) {
-                        main_status.innerText = 'zapret не работает';
+                        main_status.innerText = t('not_working');
                         main_icon.innerText = 'play_arrow'
-                        main_note.innerText = 'Запустить'
+                        main_note.innerText = t('start');
                     }
                 });
             } else {
                 exec("zapret start").then(({ stdout }) => {
                     toast(stdout);
                     if (stdout.includes("started")) {
-                        main_status.innerText = 'zapret работает';
+                        main_status.innerText = t('zapret_working');
                         main_icon.innerText = 'stop'
-                        main_note.innerText = 'Остановить'
+                        main_note.innerText = t('stop');
                     }
                 });
             }
@@ -75,11 +76,11 @@
             if (state) {
                 exec("zapret autostart-on");
                 toast(stdout);
-                autostart_note.innerText = 'Включен';
+                autostart_note.innerText = t('is_on');
             } else {
                 exec("zapret autostart-off");
                 toast(stdout);
-                autostart_note.innerText = 'Выключен';
+                autostart_note.innerText = t('is_off');
             }
         }
         window.manage_autostart = manage_autostart;
@@ -87,42 +88,46 @@
 </head>
 
 <body>
-    <div>
-        <nav class="m l left">
-            <a class="active" href="index.html"><i>info</i><span>Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span>Домены</span></a>
-            <a href="config.html"><i>build</i><span>Конфиг</span></a>
-            <a href="check.html"><i>check</i><span>Проверка</span></a>
-        </nav>
-        <nav class="s bottom">
-            <a class="active" href="index.html"><i>info</i><span>Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span>Домены</span></a>
-            <a href="config.html"><i>build</i><span>Конфиг</span></a>
-            <a href="check.html"><i>check</i><span>Проверка</span></a>
-        </nav>
-        <main class="responsive">
-            <div style="text-align: center;">
-            <h1 id="main_status">...</h1>
-            <button onclick="start_stop()">
-                <i id="main_icon"></i>
-                <span id="main_note">...</span>
-            </button>
-            <div class="field middle-align">
-                <nav>
-                    <div class="max">
-                        <h6>Автозапуск</h6>
-                        <div id="autostart_note"></div>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="autostart" onchange="manage_autostart(this.checked)">
-                        <span></span>
-                    </label>
-                </nav>
-            </div>
-            </div>
-        </main>
-    </div>
-    
+    <nav class="m l left">
+        <a class="active" href="index.html"><i>info</i><span class="translate" id="info">Инфо</span></a>
+        <a href="domains.html"><i>domain</i><span class="translate" id="domains">Домены</span></a>
+        <a href="config.html"><i>build</i><span class="translate" id="config">Конфиг</span></a>
+        <a href="check.html"><i>check</i><span class="translate" id="check">Проверка</span></a>
+    </nav>
+    <nav class="s bottom">
+        <a class="active" href="index.html"><i>info</i><span class="translate" id="info">Инфо</span></a>
+        <a href="domains.html"><i>domain</i><span class="translate" id="domains">Домены</span></a>
+        <a href="config.html"><i>build</i><span class="translate" id="config">Конфиг</span></a>
+        <a href="check.html"><i>check</i><span class="translate" id="check">Проверка</span></a>
+    </nav>
+    <main class="responsive">
+        <div style="text-align: center;">
+        <h1 id="main_status">...</h1>
+        <button onclick="start_stop()">
+            <i id="main_icon"></i>
+            <span id="main_note">...</span>
+        </button>
+        <div class="field middle-align">
+            <nav>
+                <div class="max">
+                    <h6 class="translate" id="autostart">Автозапуск</h6>
+                    <div id="autostart_note"></div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="autostart" onchange="manage_autostart(this.checked)">
+                    <span></span>
+                </label>
+            </nav>
+        </div>
+        </div>
+    </main>
+    <script>
+        if (!navigator.language.startsWith('ru')) {
+            Array.from(document.getElementsByClassName('translate')).forEach(e => {
+                e.innerText = t(e.id);
+            });
+        }
+    </script>
 </body>
 
 </html>

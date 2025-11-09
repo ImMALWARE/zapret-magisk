@@ -1,6 +1,6 @@
 {
-    "version": "1.6",
-    "versionCode": 17,
-    "zipUrl": "https://github.com/ImMALWARE/zapret-magisk/releases/download/8/zapret_module.zip",
-    "changelog": "https://raw.githubusercontent.com/ImMALWARE/zapret-magisk/master/README.md"
+    "version": "1.7",
+    "versionCode": 18,
+    "zipUrl": "https://github.com/ImMALWARE/zapret-magisk/releases/download/9/zapret_module.zip",
+    "changelog": "https://raw.githubusercontent.com/ImMALWARE/zapret-magisk/master/changelog.md"
 }

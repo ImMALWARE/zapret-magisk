@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
+    <script src="/i18n.js"></script>
     <style>
         @font-face {
             font-family: "Google Sans";
@@ -76,7 +77,7 @@
                 check_button.disabled = false;
             });
             scriptOutput.on('error', () => {
-                toast("Что-то пошло не так");
+                toast(t('something_went_wrong'));
                 check_button.disabled = false;
             });
         }
@@ -85,33 +86,37 @@
 </head>
 
 <body>
-    <div>
-        <nav class="m l left">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a class="active" href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <nav class="s bottom">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a class="active" href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <main class="responsive">
-            <article class="border big">
-                <div id="main_text">
-                </div>
-            </article>
-                <div style="margin-bottom: 30px;">
-                    <button onclick="start_check()" id="check_button">
-                        <i>play_arrow</i>
-                        <span>Начать</span>
-                    </button>
-                </div>
-        </main>
-    </div>
-
+    <nav class="m l left">
+        <a href="index.html"><i>info</i><span class="bottom translate" id="info">Инфо</span></a>
+        <a href="domains.html"><i>domain</i><span class="bottom translate" id="domains">Домены</span></a>
+        <a href="config.html"><i>build</i><span class="bottom translate" id="config">Конфиг</span></a>
+        <a class="active" href="check.html"><i>check</i><span class="bottom translate" id="check">Проверка</span></a>
+    </nav>
+    <nav class="s bottom">
+        <a href="index.html"><i>info</i><span class="bottom translate" id="info">Инфо</span></a>
+        <a href="domains.html"><i>domain</i><span class="bottom translate" id="domains">Домены</span></a>
+        <a href="config.html"><i>build</i><span class="bottom translate" id="config">Конфиг</span></a>
+        <a class="active" href="check.html"><i>check</i><span class="bottom translate" id="check">Проверка</span></a>
+    </nav>
+    <main class="responsive">
+        <article class="border big">
+            <div id="main_text">
+            </div>
+        </article>
+        <div style="margin-bottom: 30px;">
+            <button onclick="start_check()" id="check_button">
+                <i>play_arrow</i>
+                <span class="translate" id="begin">Начать</span>
+            </button>
+        </div>
+    </main>
+    <script>
+        if (!navigator.language.startsWith('ru')) {
+            Array.from(document.getElementsByClassName('translate')).forEach(e => {
+                e.innerText = t(e.id);
+            });
+        }
+    </script>
 </body>
 
 </html>

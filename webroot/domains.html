@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
+    <script src="/i18n.js"></script>
     <style>
         @font-face {
             font-family: "Google Sans";
@@ -26,14 +27,17 @@
             src: url(https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3Owp4.woff2) format("woff2");
             unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
         }
+
         body {
             user-select: none;
             font-family: "Google Sans";
         }
+
         span:not(.bottom) {
             word-break: break-all;
             white-space: normal;
         }
+
         .input-field {
             display: flex;
             margin-bottom: 300px;
@@ -51,10 +55,10 @@
         window.open_tab = open_tab;
 
         exec("cat /data/adb/zapret/autohosts.txt").then(({ stdout }) => {
-        const domains = stdout
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
+            const domains = stdout
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
 
             for (const domain of domains) {
                 const li = document.createElement('li');
@@ -65,10 +69,10 @@
         });
 
         exec("cat /data/adb/zapret/ignore.txt").then(({ stdout }) => {
-        const domains = stdout
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
+            const domains = stdout
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
 
             for (const domain of domains) {
                 const li = document.createElement('li');
@@ -120,50 +124,55 @@
 </head>
 
 <body>
-    <div>
-        <nav class="m l left">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a class="active" href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
+    <nav class="m l left">
+        <a href="index.html"><i>info</i><span class="bottom translate" id="info">Инфо</span></a>
+        <a class="active" href="domains.html"><i>domain</i><span class="bottom translate" id="domains">Домены</span></a>
+        <a href="config.html"><i>build</i><span class="bottom translate" id="config">Конфиг</span></a>
+        <a href="check.html"><i>check</i><span class="bottom translate" id="check">Проверка</span></a>
+    </nav>
+    <nav class="s bottom">
+        <a href="index.html"><i>info</i><span class="bottom translate" id="info">Инфо</span></a>
+        <a class="active" href="domains.html"><i>domain</i><span class="bottom translate" id="domains">Домены</span></a>
+        <a href="config.html"><i>build</i><span class="bottom translate" id="config">Конфиг</span></a>
+        <a href="check.html"><i>check</i><span class="bottom translate" id="check">Проверка</span></a>
+    </nav>
+    <main class="responsive">
+        <nav class="tabbed">
+            <a class="active tab" onclick="open_tab('autohosts', this)"><i>lock_open</i><span>autohosts</span></a>
+            <a class="tab" onclick="open_tab('ignore', this)"><i>visibility_off</i><span>ignore</span></a>
         </nav>
-        <nav class="s bottom">
-            <a href="index.html"><i>info</i><span class="bottom">Инфо</span></a>
-            <a class="active" href="domains.html"><i>domain</i><span class="bottom">Домены</span></a>
-            <a href="config.html"><i>build</i><span class="bottom">Конфиг</span></a>
-            <a href="check.html"><i>check</i><span class="bottom">Проверка</span></a>
-        </nav>
-        <main class="responsive">
-            <nav class="tabbed">
-                <a class="active tab" onclick="open_tab('autohosts', this)"><i>lock_open</i><span>autohosts</span></a>
-                <a class="tab" onclick="open_tab('ignore', this)"><i>visibility_off</i><span>ignore</span></a>
-            </nav>
-            <div class="page padding active" id="autohosts">
-                <ul class="list border" id="autohosts_list">
-                </ul>
-                <div class="input-field">
-                    <div class="field label border" style="display: flex; flex: 1;">
-                        <input id="autohosts_add" type="text" placeholder=" ">
-                        <label>Новый домен</label>
-                    </div>
-                    <button class="button circle" style="margin-top: 3px;" onclick="add_autohost(autohosts_add.value)"><i>add</i></button>
+        <div class="page padding active" id="autohosts">
+            <ul class="list border" id="autohosts_list">
+            </ul>
+            <div class="input-field">
+                <div class="field label border" style="display: flex; flex: 1;">
+                    <input id="autohosts_add" type="text" placeholder=" ">
+                    <label class="translate" id="new_domain">Новый домен</label>
                 </div>
+                <button class="button circle" style="margin-top: 3px;"
+                    onclick="add_autohost(autohosts_add.value)"><i>add</i></button>
             </div>
-            <div class="page padding" id="ignore">
-                <ul class="list border" id="ignore_list">
-                    </ul>
-                    <div class="input-field">
-                    <div class="field label border" style="display: flex; flex: 1;">
-                        <input id="ignore_add" type="text" placeholder=" ">
-                        <label>Новый домен</label>
-                    </div>
-                    <button class="button circle" style="margin-top: 3px;" onclick="add_ignore(ignore_add.value)"><i>add</i></button>
+        </div>
+        <div class="page padding" id="ignore">
+            <ul class="list border" id="ignore_list">
+            </ul>
+            <div class="input-field">
+                <div class="field label border" style="display: flex; flex: 1;">
+                    <input id="ignore_add" type="text" placeholder=" ">
+                    <label class="translate" id="new_domain">Новый домен</label>
                 </div>
-                
+                <button class="button circle" style="margin-top: 3px;"
+                    onclick="add_ignore(ignore_add.value)"><i>add</i></button>
             </div>
-        </main>
-    </div>
-
+        </div>
+    </main>
+    <script>
+        if (!navigator.language.startsWith('ru')) {
+            Array.from(document.getElementsByClassName('translate')).forEach(e => {
+                e.innerText = t(e.id);
+            });
+        }
+    </script>
 </body>
 
 </html>

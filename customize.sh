@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-ui_print "Копирование nfqws для $ARCH"
+ui_print "Copying nfqws для $ARCH"
 case "$ARCH" in
     arm64)   cp -af "$MODPATH/common/nfqws_arm64" "$MODPATH/system/bin/nfqws";;
     arm)     cp -af "$MODPATH/common/nfqws_arm" "$MODPATH/system/bin/nfqws";;
@@ -11,11 +11,11 @@ rm -rf "$MODPATH/common"
 chmod 755 "$MODPATH/system/bin/nfqws"
 
 if ! [ -d "/data/adb/zapret" ]; then
-    ui_print "Создаю директорию для zapret";
+    ui_print "Creating directory for zapret";
     mkdir -p "/data/adb/zapret";
 fi;
 
-ui_print "Заполняю autohosts.txt, ignore.txt, config.txt"
+ui_print "Filling autohosts.txt, ignore.txt, config.txt"
 
 cat > "/data/adb/zapret/autohosts.txt" << EOL
 7tv.app
@@ -184,4 +184,4 @@ chmod 666 "/data/adb/zapret/config.txt";
 
 touch "/data/adb/zapret/autostart"
 
-ui_print "Прочитайте гайд на https://wiki.malw.link/network/vpns/zapret"
+ui_print "Read the guide at https://wiki.malw.link/network/vpns/zapret"

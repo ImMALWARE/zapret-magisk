@@ -1,7 +1,8 @@
 # Magisk модуль с zapret
+[README in English](https://github.com/ImMALWARE/zapret-magisk/blob/master/README_EN.md)
 > Оригинальный репозиторий zapret: https://github.com/bol-van/zapret
 
-1. Скачайте модуль тут: https://github.com/ImMALWARE/zapret-magisk/releases/download/7/zapret_module.zip
+1. Скачайте модуль тут: https://github.com/ImMALWARE/zapret-magisk/releases/latest/download/zapret_module.zip
 2. Установите модуль, перезагрузитесь, как обычно. **zapret** будет запущен автоматически.
 
 # Все способы управления
@@ -20,7 +21,7 @@
 
 На вкладке Главная можно останавливать/запускать zapret, включать/отключать автозапуск при загрузке Android.
 
-На вкладке Домены можно добавлять/удалять домены, редактируя autohosts и ignore
+На вкладке Домены можно добавлять/удалять домены, редактируя **autohosts** и **ignore**.
 
 На вкладке Конфиг можно отредактировать конфиг
 
