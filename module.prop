@@ -1,7 +1,7 @@
 id=zapret
 name=zapret
-version=1.6
-versionCode=17
+version=1.7
+versionCode=18
 author=MALWARE
 description=Ускорение устаревших серверов. Нажмите Action, чтобы включить/отключить. https://t.me/immalware
 updateJson=https://raw.githubusercontent.com/ImMALWARE/zapret-magisk/master/update.json
