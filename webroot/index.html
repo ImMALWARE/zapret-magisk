@@ -48,7 +48,7 @@
             }
         });
         exec('[ -f "/data/adb/zapret/autostart" ] && echo "true" || echo "false"').then(({ stdout }) => {
-            autostart.checked = stdout;
+            autostart_checkbox.checked = stdout.trim() === "true";
         });
         function start_stop() {
             if (main_note.innerText == t('stop')) {
@@ -74,13 +74,15 @@
         window.start_stop = start_stop;
         function manage_autostart(state) {
             if (state) {
-                exec("zapret autostart-on");
-                toast(stdout);
-                autostart_note.innerText = t('is_on');
+                exec("zapret autostart-on").then(({ stdout }) => {
+                    toast(stdout);
+                    autostart_note.innerText = t('is_on');
+                });
             } else {
-                exec("zapret autostart-off");
-                toast(stdout);
-                autostart_note.innerText = t('is_off');
+                exec("zapret autostart-off").then(({ stdout }) => {
+                    toast(stdout);
+                    autostart_note.innerText = t('is_off');
+                });
             }
         }
         window.manage_autostart = manage_autostart;
@@ -114,7 +116,7 @@
                     <div id="autostart_note"></div>
                 </div>
                 <label class="switch">
-                    <input type="checkbox" id="autostart" onchange="manage_autostart(this.checked)">
+                    <input type="checkbox" id="autostart_checkbox" onchange="manage_autostart(this.checked)">
                     <span></span>
                 </label>
             </nav>
