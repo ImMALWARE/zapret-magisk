@@ -9,7 +9,7 @@ const strings = {
         info: 'Инфо',
         domains: 'Домены',
         config: 'Конфиг',
-		ipset: 'IP-Адреса',
+		ipset: 'IP<br>Адреса',
         check: 'Проверка',
         autostart: 'Автозапуск',
         something_went_wrong: 'Что-то пошло не так',
