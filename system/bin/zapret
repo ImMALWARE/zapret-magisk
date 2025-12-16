@@ -20,6 +20,7 @@ if [ "$1" == "start" ]; then
     while IFS= read -r line; do
         line="${line//\{hosts\}/"/data/adb/zapret/autohosts.txt"}"
         line="${line//\{ignore\}/"/data/adb/zapret/ignore.txt"}"
+		line="${line//\{ipset\}/"/data/adb/zapret/ipset.txt"}"
         line="${line//\{youtube\}/"/etc/youtube.txt"}"
         line="${line//\{quicgoogle\}/"/etc/quic_initial_www_google_com.bin"}"
         line="${line//\{tlsgoogle\}/"/etc/tls_clienthello_www_google_com.bin"}"
