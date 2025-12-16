@@ -61,7 +61,6 @@
                     .replace(/ $/, '')
                 )
                 .join('\n');
-            if (config.length === 0) return;
             configtext.value = config;
             exec(`echo "${config}" > /data/adb/zapret/ipset.txt`).then(() => {
                 toast(t('saved'));
