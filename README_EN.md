@@ -40,6 +40,8 @@ In Termux, you can execute commands:
 
 `{hosts}` — will substitute the path to `autohosts.txt`
 
+`{ipset}` — will substitute the path to `ipset.txt`
+
 `{ignore}` — will substitute the path to `ignore.txt`
 
 `{youtube}` — will substitute the path to `/etc/youtube.txt`

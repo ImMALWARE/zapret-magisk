@@ -2,7 +2,7 @@
 
 pidof "nfqws" > /dev/null && echo "zapret is running" || echo "zapret is not running"
 
-if [ "$1" == "start" ]; then
+if [ "$1" = "start" ]; then
     check_iptables_support() {
         if iptables -t mangle -A POSTROUTING -p tcp -m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -j ACCEPT 2>/dev/null; then
             iptables -t mangle -D POSTROUTING -p tcp -m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -j ACCEPT 2>/dev/null
@@ -26,7 +26,7 @@ if [ "$1" == "start" ]; then
         line="${line//\{tlsgoogle\}/"/etc/tls_clienthello_www_google_com.bin"}"
         line="$(echo "$line" | sed -E 's/--wf-(tcp|udp)=[^ ]+//g')"
         line="$(echo "$line" | sed -E 's/  +/ /g' | sed -E 's/^ //;s/ $//')"
-        args+=" $line"
+        args="$args $line"
     done < /data/adb/zapret/config.txt
 
     sysctl net.netfilter.nf_conntrack_tcp_be_liberal=1 > /dev/null;
@@ -34,7 +34,7 @@ if [ "$1" == "start" ]; then
     cbReply="-m connbytes --connbytes-dir=reply --connbytes-mode=packets --connbytes 1:6 -m mark ! --mark 0x40000000/0x40000000";
 
     iptAdd() {
-        if [[ "$use_iptables" == "3" ]]; then cbOrig=""; cbReply=""; fi;
+        if [ "$use_iptables" = "3" ]; then cbOrig=""; cbReply=""; fi;
         iptDPort="--dport $2"; iptSPort="--sport $2";
         iptables -t mangle -I POSTROUTING -p $1 $iptDPort $cbOrig -j NFQUEUE --queue-num 200 --queue-bypass;
         iptables -t mangle -I PREROUTING -p $1 $iptSPort $cbReply -j NFQUEUE --queue-num 200 --queue-bypass;
@@ -44,13 +44,16 @@ if [ "$1" == "start" ]; then
 
     iptMultiPort() {
         for current_port in $2; do
-            if [[ $current_port == *-* ]]; then
-                for i in $(seq ${current_port%-*} ${current_port#*-}); do 
-                    iptAdd "$1" "$i"; 
-                done
-            else 
-                iptAdd "$1" "$current_port"; 
-            fi
+            case "$current_port" in
+                *-*)
+                    for i in $(seq ${current_port%-*} ${current_port#*-}); do
+                        iptAdd "$1" "$i";
+                    done
+                    ;;
+                *)
+                    iptAdd "$1" "$current_port"
+                    ;;
+            esac
         done
     }
 
@@ -60,21 +63,24 @@ if [ "$1" == "start" ]; then
     iptMultiPort "udp" "$udp_ports";
 
     nfqws --uid=0:0 --qnum=200 $args > /dev/null & 
-    echo "zapret service started!"; return 0; fi
+    echo "zapret service started!"; exit 0; fi
 
-if [ "$1" == "stop" ]; then
+if [ "$1" = "stop" ]; then
     iptables -t mangle -F PREROUTING; iptables -t mangle -F POSTROUTING;
     ip6tables -t mangle -F PREROUTING; ip6tables -t mangle -F POSTROUTING;
-    kill "$(pidof nfqws)";
-    echo "zapret service stopped!"; return 0;
+    pid=$(pidof nfqws)
+    if [ -n "$pid" ]; then
+        kill "$pid";
+    fi
+    echo "zapret service stopped!"; exit 0;
 fi;
 
-if [ "$1" == "autostart-on" ]; then
+if [ "$1" = "autostart-on" ]; then
     touch /data/adb/zapret/autostart;
     echo "Autostart enabled"
 fi;
 
-if [ "$1" == "autostart-off" ]; then
+if [ "$1" = "autostart-off" ]; then
     rm /data/adb/zapret/autostart;
     echo "Autostart disabled"
 fi;
