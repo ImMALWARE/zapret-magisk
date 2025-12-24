@@ -25,6 +25,9 @@ chmod 666 "/data/adb/zapret/ignore.txt";
 cat "$MODPATH/common/config.txt" > "/data/adb/zapret/config.txt"
 chmod 666 "/data/adb/zapret/config.txt";
 
+echo "" > "/data/adb/zapret/ipset.txt"
+chmod 666 "/data/adb/zapret/ipset.txt";
+
 rm -rf "$MODPATH/common"
 
 touch "/data/adb/zapret/autostart"
