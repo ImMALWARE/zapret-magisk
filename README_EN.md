@@ -11,6 +11,8 @@ The Action button in Magisk stops/starts zapret.
 ### Files
 The list of blocked site domains is located in `/data/adb/zapret/autohosts.txt`. Add a domain there in case the site you need does not work.
 
+You can add blocked IP-addresses and CIDR to `/opt/zapret/ipset.txt`
+
 If an unblocked site stops opening, add its domain to `/data/adb/zapret/ignore.txt`.
 
 The config (strategy) is located in `/data/adb/zapret/config.txt`.
@@ -24,6 +26,8 @@ On the Main tab, you can stop/start zapret, and enable/disable autostart on Andr
 On the Domains tab, you can add/remove domains by editing **autohosts** and **ignore**.
 
 On the Config tab, you can edit the config.
+
+On the IP-addresses tab, you can edit `ipset.txt` file.
 
 On the Check tab, the script will check the connection to all domains from `autohosts.txt` with the current strategy.
 ### Commands
