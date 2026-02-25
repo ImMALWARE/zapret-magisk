@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
-    <script src="/i18n.js"></script>
+    <script src="i18n.js"></script>
     <style>
         @font-face {
             font-family: "Google Sans";
@@ -43,7 +43,7 @@
         }
     </style>
     <script type="module">
-        import { exec, toast } from '/kernelsu.js';
+        import { exec, toast } from './kernelsu.js';
         function undo() {
             exec("cat /data/adb/zapret/ipset.txt").then(({ stdout }) => {
                 configtext.value = stdout;
