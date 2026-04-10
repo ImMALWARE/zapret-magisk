@@ -11,7 +11,9 @@ The Action button in Magisk stops/starts zapret.
 ### Files
 The list of blocked site domains is located in `/data/adb/zapret/autohosts.txt`. Add a domain there in case the site you need does not work.
 
-You can add blocked IP-addresses and CIDR to `/opt/zapret/ipset.txt`
+You can add blocked IP-addresses and CIDR to `/data/adb/zapret/ipset.txt`
+
+`/data/adb/zapret/whitelist.txt` — list of domains in the whitelist. Requests to Cloudflare, Hetzner, OVH, etc. servers with these domains will pass correctly. Do not confuse with the mobile internet whitelist.
 
 If an unblocked site stops opening, add its domain to `/data/adb/zapret/ignore.txt`.
 
@@ -45,6 +47,8 @@ In Termux, you can execute commands:
 `{hosts}` — will substitute the path to `autohosts.txt`
 
 `{ipset}` — will substitute the path to `ipset.txt`
+
+`{whitelist}` — will substitute the path to `whitelist.txt`
 
 `{ignore}` — will substitute the path to `ignore.txt`
 

@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
-    <script src="/i18n.js"></script>
+    <script src="i18n.js"></script>
     <style>
         @font-face {
             font-family: "Google Sans";
@@ -43,7 +43,7 @@
         }
     </style>
     <script type="module">
-        import { exec, toast } from '/kernelsu.js';
+        import { exec, toast } from './kernelsu.js';
         function undo() {
             exec("cat /data/adb/zapret/config.txt").then(({ stdout }) => {
                 configtext.value = stdout;
@@ -122,6 +122,7 @@
             <p><code>{hosts}</code><span class="translate" id="will_set_path"> — подставит путь к </span><code>autohosts.txt</code></p>
             <p><code>{ignore}</code><span class="translate" id="will_set_path"> — подставит путь к </span><code>ignore.txt</code></p>
 			<p><code>{ipset}</code><span class="translate" id="will_set_path"> — подставит путь к </span><code>ipset.txt</code></p>
+            <p><code>{whitelist}</code><span class="translate" id="will_set_path"> — подставит путь к </span><code>whitelist.txt</code></p>
             <p><code>{youtube}</code><span class="translate" id="will_set_path"> — подставит путь к </span><code>/etc/youtube.txt</code></p>
             <p><code>{quicgoogle}</code><span class="translate" id="will_set_path"> — подставит путь к </span><code>/etc/quic_initial_www_google_com.bin</code></p>
             <p><code>{tlsgoogle}</code><span class="translate" id="will_set_path"> — подставит путь к </span><code>/etc/tls_clienthello_www_google_com.bin</code></p>

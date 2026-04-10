@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.11.20/dist/cdn/beer.min.js"></script>
-    <script src="/i18n.js"></script>
+    <script src="i18n.js"></script>
     <style>
         @font-face {
             font-family: "Google Sans";
@@ -44,7 +44,7 @@
         }
     </style>
     <script type="module">
-        import { exec } from '/kernelsu.js';
+        import { exec } from './kernelsu.js';
 
         function open_tab(tab, el) {
             document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));

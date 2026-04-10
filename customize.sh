@@ -14,7 +14,7 @@ if ! [ -d "/data/adb/zapret" ]; then
     mkdir -p "/data/adb/zapret";
 fi;
 
-ui_print "Filling autohosts.txt, ignore.txt, config.txt, ipset.txt"
+ui_print "Filling autohosts.txt, ignore.txt, config.txt, ipset.txt, whitelist.txt"
 
 cat "$MODPATH/common/autohosts.txt" > "/data/adb/zapret/autohosts.txt"
 chmod 666 "/data/adb/zapret/autohosts.txt";
@@ -27,6 +27,9 @@ chmod 666 "/data/adb/zapret/config.txt";
 
 cat "$MODPATH/common/ipset.txt" > "/data/adb/zapret/ipset.txt"
 chmod 666 "/data/adb/zapret/ipset.txt";
+
+cat "$MODPATH/common/whitelist.txt" > "/data/adb/zapret/whitelist.txt"
+chmod 666 "/data/adb/zapret/whitelist.txt";
 
 rm -rf "$MODPATH/common"
 

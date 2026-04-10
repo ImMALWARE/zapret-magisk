@@ -3,7 +3,6 @@ googlevideo.com
 jnn-pa.googleapis.com
 wide-youtube.l.google.com
 youtu.be
-youtube-nocookie.com
 youtube-ui.l.google.com
 youtube.com
 youtubeembeddedplayer.googleapis.com

@@ -6,68 +6,89 @@ if [ "$1" = "start" ]; then
     check_iptables_support() {
         if iptables -t mangle -A POSTROUTING -p tcp -m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -j ACCEPT 2>/dev/null; then
             iptables -t mangle -D POSTROUTING -p tcp -m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -j ACCEPT 2>/dev/null
-            echo "2"
+            HAS_CONNBYTES=1
         else
-            echo "3"
+            HAS_CONNBYTES=0
+        fi
+        if iptables -t mangle -A POSTROUTING -p tcp -m multiport --dports 80,443 -j ACCEPT 2>/dev/null; then
+            iptables -t mangle -D POSTROUTING -p tcp -m multiport --dports 80,443 -j ACCEPT 2>/dev/null
+            HAS_MULTIPORT=1
+        else
+            HAS_MULTIPORT=0
         fi
     }
-    use_iptables=$(check_iptables_support)
+    check_iptables_support
 
     echo "Starting zapret...";
 
-    args=""
+    DESYNC_MARK=0x40000000
+    args="--qnum=200 --uid=0:0 --dpi-desync-fwmark=$DESYNC_MARK"
 
     while IFS= read -r line; do
-        line="${line//\{hosts\}/"/data/adb/zapret/autohosts.txt"}"
-        line="${line//\{ignore\}/"/data/adb/zapret/ignore.txt"}"
-		line="${line//\{ipset\}/"/data/adb/zapret/ipset.txt"}"
-        line="${line//\{youtube\}/"/etc/youtube.txt"}"
-        line="${line//\{quicgoogle\}/"/etc/quic_initial_www_google_com.bin"}"
-        line="${line//\{tlsgoogle\}/"/etc/tls_clienthello_www_google_com.bin"}"
+        line="${line//\{hosts\}//data/adb/zapret/autohosts.txt}"
+        line="${line//\{ignore\}//data/adb/zapret/ignore.txt}"
+        line="${line//\{ipset\}//data/adb/zapret/ipset.txt}"
+        line="${line//\{whitelist\}//data/adb/zapret/whitelist.txt}"
+        line="${line//\{youtube\}//etc/youtube.txt}"
+        line="${line//\{quicgoogle\}//etc/quic_initial_www_google_com.bin}"
+        line="${line//\{tlsgoogle\}//etc/tls_clienthello_www_google_com.bin}"
         line="$(echo "$line" | sed -E 's/--wf-(tcp|udp)=[^ ]+//g')"
         line="$(echo "$line" | sed -E 's/  +/ /g' | sed -E 's/^ //;s/ $//')"
-        args="$args $line"
+        [ -n "$line" ] && args="$args $line"
     done < /data/adb/zapret/config.txt
 
     sysctl net.netfilter.nf_conntrack_tcp_be_liberal=1 > /dev/null;
-    cbOrig="-m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12 -m mark ! --mark 0x40000000/0x40000000";
-    cbReply="-m connbytes --connbytes-dir=reply --connbytes-mode=packets --connbytes 1:6 -m mark ! --mark 0x40000000/0x40000000";
+    TCP_PORTS=$(echo "$args" | tr ' ' '\n' | grep '^--filter-tcp=' | sed 's/--filter-tcp=//')
+    UDP_PORTS=$(echo "$args" | tr ' ' '\n' | grep '^--filter-udp=' | sed 's/--filter-udp=//')
 
-    iptAdd() {
-        if [ "$use_iptables" = "3" ]; then cbOrig=""; cbReply=""; fi;
-        iptDPort="--dport $2"; iptSPort="--sport $2";
-        iptables -t mangle -I POSTROUTING -p $1 $iptDPort $cbOrig -j NFQUEUE --queue-num 200 --queue-bypass;
-        iptables -t mangle -I PREROUTING -p $1 $iptSPort $cbReply -j NFQUEUE --queue-num 200 --queue-bypass;
-        ip6tables -t mangle -I POSTROUTING -p $1 $iptDPort $cbOrig -j NFQUEUE --queue-num 200 --queue-bypass;
-        ip6tables -t mangle -I PREROUTING -p $1 $iptSPort $cbReply -j NFQUEUE --queue-num 200 --queue-bypass;
+    extra_flags=""
+    if [ "$HAS_CONNBYTES" = "1" ]; then
+        extra_flags="-m connbytes --connbytes-dir=original --connbytes-mode=packets --connbytes 1:12"
+    fi
+    if [ "$HAS_CONNBYTES" = "1" ]; then
+        extra_flags="$extra_flags -m mark ! --mark $DESYNC_MARK/$DESYNC_MARK"
+    fi
+
+    add_ipt_rule() {
+        local proto=$1
+        local port=$2
+        iptables -t mangle -I POSTROUTING -p "$proto" --dport "$port" $extra_flags -j NFQUEUE --queue-num 200 --queue-bypass
+        ip6tables -t mangle -I POSTROUTING -p "$proto" --dport "$port" $extra_flags -j NFQUEUE --queue-num 200 --queue-bypass
     }
 
-    iptMultiPort() {
-        for current_port in $2; do
-            case "$current_port" in
-                *-*)
-                    for i in $(seq ${current_port%-*} ${current_port#*-}); do
-                        iptAdd "$1" "$i";
-                    done
-                    ;;
-                *)
-                    iptAdd "$1" "$current_port"
-                    ;;
-            esac
-        done
+    add_ipt_rules_multiport() {
+        local proto=$1
+        local ports=$2
+        iptables -t mangle -I POSTROUTING -p "$proto" -m multiport --dports "$ports" $extra_flags -j NFQUEUE --queue-num 200 --queue-bypass
+        ip6tables -t mangle -I POSTROUTING -p "$proto" -m multiport --dports "$ports" $extra_flags -j NFQUEUE --queue-num 200 --queue-bypass
     }
 
-    tcp_ports="$(echo $args | grep -oE 'filter-tcp=[0-9,-]+' | sed -e 's/.*=//g' -e 's/,/\n/g' -e 's/ /,/g' | sort -un)";
-    udp_ports="$(echo $args | grep -oE 'filter-udp=[0-9,-]+' | sed -e 's/.*=//g' -e 's/,/\n/g' -e 's/ /,/g' | sort -un)";
-    iptMultiPort "tcp" "$tcp_ports";
-    iptMultiPort "udp" "$udp_ports";
+    add_ipt_for_proto() {
+        local proto=$1
+        local raw_ports=$2
+        if [ -z "$raw_ports" ]; then
+            return
+        fi
+        if [ "$HAS_MULTIPORT" = "1" ]; then
+            local merged=$(echo "$raw_ports" | paste -sd, | sed 's/-/:/g')
+            add_ipt_rules_multiport "$proto" "$merged"
+        else
+            echo "$raw_ports" | tr ',' '\n' | while read -r p; do
+                local port=$(echo "$p" | sed 's/-/:/g')
+                add_ipt_rule "$proto" "$port"
+            done
+        fi
+    }
 
-    nfqws --uid=0:0 --qnum=200 $args > /dev/null & 
+    add_ipt_for_proto "tcp" "$TCP_PORTS"
+    add_ipt_for_proto "udp" "$UDP_PORTS"
+
+    nfqws $args > /dev/null &
     echo "zapret service started!"; exit 0; fi
 
 if [ "$1" = "stop" ]; then
-    iptables -t mangle -F PREROUTING; iptables -t mangle -F POSTROUTING;
-    ip6tables -t mangle -F PREROUTING; ip6tables -t mangle -F POSTROUTING;
+    iptables -t mangle -F POSTROUTING;
+    ip6tables -t mangle -F POSTROUTING;
     pid=$(pidof nfqws)
     if [ -n "$pid" ]; then
         kill "$pid";
